@@ -1,6 +1,9 @@
 const initialState = {
   token: null,
   userId: null,
+  fullname: null,
+  gender: null,
+  role: null,
   isAuthenticated: false,
 };
 
@@ -11,6 +14,9 @@ const authReducer = (state = initialState, action) => {
         ...state,
         token: action.payload.token,
         userId: action.payload.userId,
+        fullname: action.payload.fullname,
+        gender: action.payload.gender,
+        role: action.payload.role,
         isAuthenticated: true,
       };
     case "LOGOUT":
@@ -18,6 +24,9 @@ const authReducer = (state = initialState, action) => {
         ...state,
         token: null,
         userId: null,
+        fullname: null,
+        gender: null,
+        role: null,
         isAuthenticated: false,
       };
     case "USER":
