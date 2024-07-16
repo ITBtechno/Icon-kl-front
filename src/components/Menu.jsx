@@ -598,8 +598,16 @@ export default function Menu() {
                     <div className="namePrice">
                       <span className="foodName">{items.name}</span>
                       <span className="description">
-                        Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                        Quidem.
+                        {items.ingredients && items.ingredients.length > 0
+                          ? items.ingredients.slice(0, -1).join(", ") +
+                            (items.ingredients.length > 1
+                              ? `, ${
+                                  items.ingredients[
+                                    items.ingredients.length - 1
+                                  ]
+                                }`
+                              : "")
+                          : "Lorem ipsum dolor sit amet consectetur adipisicing elit. Quidem."}
                       </span>
                       <button
                         className="price"

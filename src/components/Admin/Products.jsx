@@ -89,6 +89,28 @@ export function Dashboard() {
     }
   };
 
+  const handleDeleteProduct = async (id) => {
+    try {
+      const response = await fetch(
+        `https://icon-karaoke-and-lounge-back.onrender.com/api/items/${id}`,
+        {
+          method: "DELETE",
+        }
+      );
+
+      if (response.ok) {
+        setProducts(customers.filter((product) => product._id !== id));
+        console.log("Product deleted successfully");
+      } else {
+        setError(`HTTP error: ${response.status}`);
+        console.error("Error deleting product:", error);
+      }
+    } catch (error) {
+      setError(error.message);
+      console.error("Error deleting product:", error);
+    }
+  };
+
   useEffect(() => {
     handleGetProducts();
   }, []);
@@ -298,14 +320,14 @@ export function Dashboard() {
         <main className="grid flex-1 items-start gap-4 p-4 sm:px-6 sm:py-0 md:gap-8">
           <Tabs defaultValue="all">
             <div className="flex items-center">
-              <TabsList>
+              {/* <TabsList>
                 <TabsTrigger value="all">All</TabsTrigger>
                 <TabsTrigger value="active">Active</TabsTrigger>
                 <TabsTrigger value="draft">Draft</TabsTrigger>
                 <TabsTrigger value="archived" className="hidden sm:flex">
                   Archived
                 </TabsTrigger>
-              </TabsList>
+              </TabsList> */}
               <div className="ml-auto flex items-center gap-2">
                 <Button size="sm" variant="outline" className="h-8 gap-1">
                   <File className="h-3.5 w-3.5" />
@@ -313,12 +335,14 @@ export function Dashboard() {
                     Export
                   </span>
                 </Button>
-                <Button size="sm" className="h-8 gap-1" id="add">
-                  <PlusCircle className="h-3.5 w-3.5" />
-                  <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-                    Add Product
-                  </span>
-                </Button>
+                <Link to="/admin/addProduct">
+                  <Button size="sm" className="h-8 gap-1" id="add">
+                    <PlusCircle className="h-3.5 w-3.5" />
+                    <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
+                      Add Product
+                    </span>
+                  </Button>
+                </Link>
               </div>
             </div>
             <TabsContent value="all">
@@ -365,11 +389,11 @@ export function Dashboard() {
                             <TableCell className="font-medium">
                               {product.name}
                             </TableCell>
-                            <TableCell>
+                            {/* <TableCell>
                               <Badge variant="outline" id="status">
                                 {product.categoryId?.name}
                               </Badge>
-                            </TableCell>
+                            </TableCell> */}
                             <TableCell className="hidden md:table-cell">
                               {product.price}
                             </TableCell>
@@ -398,7 +422,13 @@ export function Dashboard() {
                                   >
                                     <DropdownMenuItem>Edit</DropdownMenuItem>
                                   </Link>
-                                  <DropdownMenuItem>Delete</DropdownMenuItem>
+                                  <DropdownMenuItem
+                                    onClick={() =>
+                                      handleDeleteProduct(product._id)
+                                    }
+                                  >
+                                    Delete
+                                  </DropdownMenuItem>
                                 </DropdownMenuContent>
                               </DropdownMenu>
                             </TableCell>
@@ -414,12 +444,12 @@ export function Dashboard() {
                     </TableBody>
                   </Table>
                 </CardContent>
-                <CardFooter>
+                {/* <CardFooter>
                   <div className="text-xs text-muted-foreground">
                     Showing <strong>1-10</strong> of <strong>32</strong>{" "}
                     products
                   </div>
-                </CardFooter>
+                </CardFooter> */}
               </Card>
             </TabsContent>
           </Tabs>

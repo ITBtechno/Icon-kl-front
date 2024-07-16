@@ -12,6 +12,7 @@ import Orders from "./components/Admin/Orders.jsx";
 import EditProduct from "./components/Admin/EditProduct.jsx";
 import Customers from "./components/Admin/Customers.jsx";
 import PrivateRoute from "./routes/PrivateRouter.jsx";
+import AddProduct from "./components/Admin/AddProduct.jsx";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <Provider store={store}>
@@ -25,6 +26,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(
           <Route path="/admin/customers" element={<Customers />} />
           <Route path="/admin/products" element={<Products />} />
           <Route path="/admin/:productId/edit" element={<EditProduct />} />
+          <Route path="/admin/addProduct" element={<AddProduct />} />
         </Route>
       </Routes>
     </BrowserRouter>

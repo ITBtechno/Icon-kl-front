@@ -125,6 +125,12 @@
     background-color: black !important;
   }
 
+  @media (max-width: 768px) {
+    .bg-background {
+      background-color: black !important;
+    }
+  }
+
   #copy {
     background-color: black !important;
     color: white !important;
@@ -138,8 +144,27 @@
     background-color: black !important;
   }
 
+  .sm\:grid-cols-3 {
+    display: grid;
+    grid-template-columns: repeat(1, minmax(0, 1fr)) !important;
+  }
+
+  .upload {
+    background-color: black !important;
+  }
+
   #account {
     background-color: black !important;
+  }
+
+  textarea {
+    background-color: black !important;
+    width: 96% !important;
+  }
+
+  #price {
+    background-color: black !important;
+    width: 96% !important;
   }
 
   #myAccount {

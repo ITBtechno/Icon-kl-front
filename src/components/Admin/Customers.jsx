@@ -89,6 +89,29 @@ export function Dashboard() {
     }
   };
 
+  const handleDeleteCustomer = async (email) => {
+    console.log("Deleting user with email:", email);
+
+    try {
+      const response = await fetch(
+        `https://icon-karaoke-and-lounge-back.onrender.com/api/users/${email}`,
+        {
+          method: "DELETE",
+        }
+      );
+
+      if (response.ok) {
+        setCustomers(customers.filter((customer) => customer.email !== email));
+      } else {
+        setError(`HTTP error: ${response.status}`);
+        console.error("HTTP error:", response.status);
+      }
+    } catch (error) {
+      setError(error.message);
+      console.error("Error:", error);
+    }
+  };
+
   useEffect(() => {
     handleGetCustomers();
   }, []);
@@ -380,7 +403,13 @@ export function Dashboard() {
                                   <DropdownMenuLabel id="actionsText">
                                     Actions
                                   </DropdownMenuLabel>
-                                  <DropdownMenuItem>Delete</DropdownMenuItem>
+                                  <DropdownMenuItem
+                                    onClick={() =>
+                                      handleDeleteCustomer(customer.email)
+                                    }
+                                  >
+                                    Delete
+                                  </DropdownMenuItem>
                                 </DropdownMenuContent>
                               </DropdownMenu>
                             </TableCell>

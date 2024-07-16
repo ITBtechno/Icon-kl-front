@@ -1,11 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import {
-  File,
+  ChevronLeft,
   Home,
   LineChart,
-  ListFilter,
-  MoreHorizontal,
   Package,
   Package2,
   PanelLeft,
@@ -13,6 +11,7 @@ import {
   Search,
   Settings,
   ShoppingCart,
+  Upload,
   Users2,
 } from "lucide-react";
 
@@ -36,7 +35,6 @@ import {
 } from "@/components/ui/card";
 import {
   DropdownMenu,
-  DropdownMenuCheckboxItem,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
@@ -44,54 +42,92 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { Label } from "@/components/ui/label";
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { Textarea } from "@/components/ui/textarea";
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { TooltipProvider } from "@radix-ui/react-tooltip";
-import "./../styles/admin.css";
 
 export function Dashboard() {
-  const [products, setProducts] = useState([]);
-  const [error, setError] = useState(null);
+  const [formData, setFormData] = useState({
+    name: "",
+    ingredients: "",
+    price: "",
+    categoryId: "",
+    image: null,
+  });
+  const [selectedImage, setSelectedImage] = useState(null);
+  const [categoryOptions, setCategoryOptions] = useState([]);
 
-  const handleGetProducts = async () => {
-    try {
-      const response = await fetch(
-        "https://icon-karaoke-and-lounge-back.onrender.com/api/items-with-category",
-        {
-          method: "GET",
-        }
-      );
-
-      if (response.ok) {
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await fetch(
+          "https://icon-karaoke-and-lounge-back.onrender.com/api/categories"
+        );
         const data = await response.json();
-        setProducts(data);
-        console.log(data);
-      } else {
-        setError(`HTTP error: ${response.status}`);
-        console.error("HTTP error:", response.status);
+        setCategoryOptions(data);
+      } catch (error) {
+        console.error("Error fetching categories:", error);
       }
-    } catch (error) {
-      setError(error.message);
-      console.error("Error:", error);
+    };
+
+    fetchCategories();
+  }, []);
+
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setSelectedImage(URL.createObjectURL(file));
+      setFormData((prev) => ({ ...prev, image: file }));
     }
   };
 
-  useEffect(() => {
-    handleGetProducts();
-  }, []);
+  const handleDeleteImage = () => {
+    setSelectedImage(null);
+    setFormData((prev) => ({ ...prev, image: null }));
+  };
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const formDataToSend = new FormData();
+    Object.entries(formData).forEach(([key, value]) => {
+      formDataToSend.append(key, value);
+    });
+
+    try {
+      const response = await fetch(
+        "https://icon-karaoke-and-lounge-back.onrender.com/api/items",
+        {
+          method: "POST",
+          body: formDataToSend,
+        }
+      );
+      if (response.ok) {
+        console.log("Product added successfully!");
+      } else {
+        console.error("Failed to add product.");
+      }
+    } catch (error) {
+      console.error("Error adding product:", error);
+    }
+  };
 
   return (
     <div className="flex min-h-screen w-full flex-col bg-muted/40">
@@ -133,6 +169,7 @@ export function Dashboard() {
             <Tooltip>
               <TooltipTrigger asChild>
                 <Link
+                  to="/admin/products"
                   href="#"
                   className="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-foreground md:h-8 md:w-8"
                 >
@@ -257,7 +294,7 @@ export function Dashboard() {
               </BreadcrumbItem>
               <BreadcrumbSeparator />
               <BreadcrumbItem>
-                <BreadcrumbPage id="page">All Products</BreadcrumbPage>
+                <BreadcrumbPage id="page">Edit Product</BreadcrumbPage>
               </BreadcrumbItem>
             </BreadcrumbList>
           </Breadcrumb>
@@ -296,131 +333,196 @@ export function Dashboard() {
           </DropdownMenu>
         </header>
         <main className="grid flex-1 items-start gap-4 p-4 sm:px-6 sm:py-0 md:gap-8">
-          <Tabs defaultValue="all">
-            <div className="flex items-center">
-              <TabsList>
-                <TabsTrigger value="all">All</TabsTrigger>
-                <TabsTrigger value="active">Active</TabsTrigger>
-                <TabsTrigger value="draft">Draft</TabsTrigger>
-                <TabsTrigger value="archived" className="hidden sm:flex">
-                  Archived
-                </TabsTrigger>
-              </TabsList>
-              <div className="ml-auto flex items-center gap-2">
-                <Button size="sm" variant="outline" className="h-8 gap-1">
-                  <File className="h-3.5 w-3.5" />
-                  <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-                    Export
-                  </span>
+          <div className="mx-auto grid max-w-[59rem] flex-1 auto-rows-max gap-4">
+            <div className="flex items-center gap-4">
+              <Button
+                variant="outline"
+                size="icon"
+                className="h-7 w-7"
+                id="back"
+              >
+                <Link to="/admin/products">
+                  <ChevronLeft className="h-4 w-4" />
+                  <span className="sr-only">Back</span>
+                </Link>
+              </Button>
+              <h1 className="flex-1 shrink-0 whitespace-nowrap text-xl font-semibold tracking-tight sm:grow-0">
+                Add Product
+              </h1>
+              {/* <Badge variant="outline" className="ml-auto sm:ml-0">
+                In stock
+              </Badge> */}
+              <div className="hidden items-center gap-2 md:ml-auto md:flex">
+                <Button variant="outline" size="sm" id="discardBtn">
+                  Discard
                 </Button>
-                <Button size="sm" className="h-8 gap-1" id="add">
-                  <PlusCircle className="h-3.5 w-3.5" />
-                  <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-                    Add Product
-                  </span>
+                <Button size="sm" type="submit" onClick={handleSubmit}>
+                  Add Product
                 </Button>
               </div>
             </div>
-            <TabsContent value="all">
-              <Card x-chunk="dashboard-06-chunk-0">
-                <CardHeader>
-                  <CardTitle>Product Information</CardTitle>
-                  <CardDescription>Add Product.</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead className="hidden w-[100px] sm:table-cell">
-                          <span className="sr-only">Image</span>
-                        </TableHead>
-                        <TableHead>Items</TableHead>
-                        <TableHead>Category</TableHead>
-                        <TableHead className="hidden md:table-cell">
-                          Price
-                        </TableHead>
-                        <TableHead className="hidden md:table-cell">
-                          Ingredients
-                        </TableHead>
-                        {/* <TableHead>
-                          <span className="sr-only">Actions</span>
-                        </TableHead> */}
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {products.length > 0 ? (
-                        products.map((product) => (
-                          <TableRow key={product._id}>
-                            <TableCell className="hidden sm:table-cell">
-                              <img
-                                alt="Product image"
-                                className="aspect-square rounded-md object-cover"
-                                height="64"
-                                src={product.image}
-                                width="64"
-                              />
-                            </TableCell>
-                            <TableCell className="font-medium">
-                              {product.name}
-                            </TableCell>
-                            <TableCell>
-                              <Badge variant="outline" id="status">
-                                {product.categoryId.name}
-                              </Badge>
-                            </TableCell>
-                            <TableCell className="hidden md:table-cell">
-                              {product.price}
-                            </TableCell>
-                            <TableCell className="hidden md:table-cell">
-                              {product.ingredients}
-                            </TableCell>
-                            <TableCell>
-                              <DropdownMenu>
-                                <DropdownMenuTrigger asChild>
-                                  <Button
-                                    aria-haspopup="true"
-                                    size="icon"
-                                    variant="ghost"
-                                  >
-                                    <MoreHorizontal className="h-4 w-4" />
-                                    <span className="sr-only">Toggle menu</span>
-                                  </Button>
-                                </DropdownMenuTrigger>
-                                <DropdownMenuContent align="end" id="actions">
-                                  <DropdownMenuLabel id="actionsText">
-                                    Actions
-                                  </DropdownMenuLabel>
-                                  <Link
-                                    to={`/admin/${product._id}/edit`}
-                                    id="edit"
-                                  >
-                                    <DropdownMenuItem>Edit</DropdownMenuItem>
-                                  </Link>
-                                  <DropdownMenuItem>Delete</DropdownMenuItem>
-                                </DropdownMenuContent>
-                              </DropdownMenu>
-                            </TableCell>
-                          </TableRow>
-                        ))
-                      ) : (
-                        <TableRow>
-                          <TableCell colSpan={6}>
-                            <p>No products available</p>
-                          </TableCell>
-                        </TableRow>
+            <div className="grid gap-4 md:grid-cols-[1fr_250px] lg:grid-cols-3 lg:gap-8">
+              <div className="grid auto-rows-max items-start gap-4 lg:col-span-2 lg:gap-8">
+                <Card x-chunk="dashboard-07-chunk-0">
+                  <CardHeader>
+                    <CardTitle>Product Details</CardTitle>
+                    <CardDescription>
+                      Lipsum dolor sit amet, consectetur adipiscing elit
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="grid gap-6">
+                      <div className="grid gap-3">
+                        <Label htmlFor="name">Name</Label>
+                        <Input
+                          type="text"
+                          id="name"
+                          name="name"
+                          value={formData.name}
+                          onChange={handleChange}
+                          required
+                        />
+                      </div>
+                      <div className="grid gap-3">
+                        <Label htmlFor="description">Ingredients</Label>
+                        <Textarea
+                          id="ingredients"
+                          name="ingredients"
+                          value={formData.ingredients}
+                          onChange={handleChange}
+                          required
+                        />
+                      </div>
+                      <div className="grid gap-3">
+                        <Label htmlFor="description">Price</Label>
+                        <div>
+                          <Label htmlFor="price-1" className="sr-only">
+                            Price
+                          </Label>
+                          <Input
+                            type="number"
+                            id="price"
+                            name="price"
+                            value={formData.price}
+                            onChange={handleChange}
+                            required
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+              <div className="grid auto-rows-max items-start gap-4 lg:gap-8">
+                <Card
+                  className="overflow-hidden"
+                  x-chunk="dashboard-07-chunk-4"
+                >
+                  <CardHeader>
+                    <CardTitle>Product Image</CardTitle>
+                    <CardDescription>
+                      Lipsum dolor sit amet, consectetur adipiscing elit
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="grid gap-2 relative">
+                      {selectedImage && (
+                        <div className="aspect-square w-full rounded-md overflow-hidden">
+                          <img
+                            src={selectedImage}
+                            alt="Product image"
+                            className="w-full h-full object-cover"
+                          />
+                          <button
+                            type="button"
+                            onClick={handleDeleteImage}
+                            className="absolute bottom-0 right-0 m-2 p-1 bg-red-500 text-white rounded-md hover:bg-red-600 focus:outline-none"
+                          >
+                            Delete
+                          </button>
+                        </div>
                       )}
-                    </TableBody>
-                  </Table>
-                </CardContent>
-                <CardFooter>
-                  <div className="text-xs text-muted-foreground">
-                    Showing <strong>1-10</strong> of <strong>32</strong>{" "}
-                    products
-                  </div>
-                </CardFooter>
-              </Card>
-            </TabsContent>
-          </Tabs>
+                      {!selectedImage && (
+                        <form className="upload">
+                          <label
+                            htmlFor="files"
+                            className="grid grid-cols-3 gap-2"
+                          >
+                            <button
+                              type="button"
+                              onClick={() =>
+                                document.getElementById("files").click()
+                              }
+                              className="flex aspect-square w-11 items-center justify-center rounded-md border border-dashed"
+                            >
+                              <Upload className="h-4 w-4 text-muted-foreground" />
+                              <span className="sr-only">Upload</span>
+                            </button>
+                            <input
+                              type="file"
+                              id="files"
+                              className="hidden"
+                              multiple
+                              required
+                              onChange={handleFileChange}
+                            />
+                          </label>
+                        </form>
+                      )}
+                    </div>
+                  </CardContent>
+                </Card>
+                <Card x-chunk="dashboard-07-chunk-2">
+                  <CardHeader>
+                    <CardTitle>Product Category</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="grid gap-6 sm:grid-cols-3">
+                      <div className="grid gap-3">
+                        <Label htmlFor="category">Category</Label>
+                        <Select>
+                          <SelectTrigger
+                            className="stocks"
+                            id="category"
+                            name="category"
+                            value={formData.categoryId}
+                            onValueChange={(value) =>
+                              setFormData((prevFormData) => ({
+                                ...prevFormData,
+                                categoryId: value,
+                              }))
+                            }
+                            required
+                          >
+                            <SelectValue placeholder="Select category" />
+                            <SelectValue defaultValue="Select category" />
+                          </SelectTrigger>
+                          <SelectContent className="stocks">
+                            {categoryOptions.map((category) => (
+                              <SelectItem
+                                key={category._id}
+                                value={category._id}
+                              >
+                                {category.name}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+            </div>
+            <div className="flex items-center justify-center gap-2 md:hidden">
+              <Button variant="outline" size="sm">
+                Discard
+              </Button>
+              <Button size="sm" type="submit" onClick={handleSubmit}>
+                Add Product
+              </Button>
+            </div>
+          </div>
         </main>
       </div>
     </div>

@@ -96,8 +96,8 @@ export default function MainPage({ switchTheme, theme }) {
   };
 
   const handleVerificationSuccess = (userId) => {
-    setUserId(userId);
-    setIsLoggedIn(true);
+    // setUserId(userId);
+    // setIsLoggedIn(true);
     closeModalUser();
     setModalUserOpen(true);
   };

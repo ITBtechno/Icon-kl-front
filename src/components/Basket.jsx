@@ -22,10 +22,10 @@ export default function Basket() {
   const dispatch = useDispatch();
 
   const handleIncrement = (id) => {
-    if (!isAuthenticated) {
-      alert("Lütfen sipariş vermek için giriş yapın.");
-      return;
-    }
+    // if (!isAuthenticated) {
+    //   alert("Lütfen sipariş vermek için giriş yapın.");
+    //   return;
+    // }
     dispatch({
       type: "INCREMENT_COUNT",
       payload: { _id: id },
@@ -33,10 +33,6 @@ export default function Basket() {
   };
 
   const handleDecrement = (id) => {
-    if (!isAuthenticated) {
-      alert("Lütfen sipariş vermek için giriş yapın.");
-      return;
-    }
     dispatch({
       type: "DECREMENT_COUNT",
       payload: { _id: id },
@@ -44,10 +40,6 @@ export default function Basket() {
   };
 
   const handleRemoveFromBasket = (id) => {
-    if (!isAuthenticated) {
-      alert("Lütfen sipariş vermek için giriş yapın.");
-      return;
-    }
     dispatch({ type: "REMOVE_FROM_ORDERS", payload: id });
   };
 

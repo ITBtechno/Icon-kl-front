@@ -69,8 +69,15 @@ import {
 import { TooltipProvider } from "@radix-ui/react-tooltip";
 
 export function Dashboard() {
-  const [edit, setEdit] = useState({ name: "" });
+  const [edit, setEdit] = useState({
+    name: "",
+    ingredients: "",
+    price: "",
+    categoryId: "",
+    image: "",
+  });
   const [error, setError] = useState(null);
+  const [categories, setCategories] = useState([]);
   let { productId } = useParams();
 
   const handleGetEdit = async () => {
@@ -96,9 +103,69 @@ export function Dashboard() {
     }
   };
 
+  const handleFetchCategories = async () => {
+    try {
+      const response = await fetch(
+        `https://icon-karaoke-and-lounge-back.onrender.com/api/categories`
+      );
+
+      if (response.ok) {
+        const data = await response.json();
+        setCategories(data);
+      } else {
+        setError(`HTTP error: ${response.status}`);
+      }
+    } catch (error) {
+      setError(error.message);
+    }
+  };
+
+  const handleUpdateProduct = async () => {
+    try {
+      const response = await fetch(
+        `https://icon-karaoke-and-lounge-back.onrender.com/api/items/${productId}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(edit),
+        }
+      );
+
+      if (response.ok) {
+        console.log("Product updated successfully!");
+      } else {
+        setError(`HTTP error: ${response.status}`);
+        console.error("HTTP error:", response.status);
+      }
+    } catch (error) {
+      setError(error.message);
+      console.error("Error:", error);
+    }
+  };
+
   useEffect(() => {
     handleGetEdit();
+    handleFetchCategories();
   }, [productId]);
+
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setEdit((prevEdit) => ({
+        ...prevEdit,
+        image: URL.createObjectURL(file),
+      }));
+    }
+  };
+
+  const handleDeleteImage = () => {
+    setEdit((prevEdit) => ({
+      ...prevEdit,
+      image: "",
+    }));
+  };
 
   return (
     <div className="flex min-h-screen w-full flex-col bg-muted/40">
@@ -320,14 +387,16 @@ export function Dashboard() {
               <h1 className="flex-1 shrink-0 whitespace-nowrap text-xl font-semibold tracking-tight sm:grow-0">
                 Pro Controller
               </h1>
-              <Badge variant="outline" className="ml-auto sm:ml-0">
+              {/* <Badge variant="outline" className="ml-auto sm:ml-0">
                 In stock
-              </Badge>
+              </Badge> */}
               <div className="hidden items-center gap-2 md:ml-auto md:flex">
                 <Button variant="outline" size="sm" id="discardBtn">
                   Discard
                 </Button>
-                <Button size="sm">Save Product</Button>
+                <Button size="sm" onClick={handleUpdateProduct}>
+                  Save Product
+                </Button>
               </div>
             </div>
             <div className="grid gap-4 md:grid-cols-[1fr_250px] lg:grid-cols-3 lg:gap-8">
@@ -357,17 +426,44 @@ export function Dashboard() {
                         />
                       </div>
                       <div className="grid gap-3">
-                        <Label htmlFor="description">Description</Label>
+                        <Label htmlFor="description">Ingredients</Label>
                         <Textarea
                           id="description"
-                          defaultValue="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam auctor, nisl nec ultricies ultricies, nunc nisl ultricies nunc, nec ultricies nunc nisl nec nunc."
-                          className="min-h-32"
+                          className="w-full"
+                          value={edit.ingredients}
+                          onChange={(e) =>
+                            setEdit((prevEdit) => ({
+                              ...prevEdit,
+                              ingredients: e.target.value,
+                            }))
+                          }
                         />
+                      </div>
+                      <div className="grid gap-3">
+                        <Label htmlFor="description">Price</Label>
+                        <div>
+                          <Label htmlFor="price-1" className="sr-only">
+                            Price
+                          </Label>
+                          <Input
+                            className="stocks"
+                            id="description"
+                            type="number"
+                            defaultValue="0"
+                            value={edit.price}
+                            onChange={(e) =>
+                              setEdit((prevEdit) => ({
+                                ...prevEdit,
+                                price: e.target.value,
+                              }))
+                            }
+                          />
+                        </div>
                       </div>
                     </div>
                   </CardContent>
                 </Card>
-                <Card x-chunk="dashboard-07-chunk-1">
+                {/* <Card x-chunk="dashboard-07-chunk-1">
                   <CardHeader>
                     <CardTitle>Stock</CardTitle>
                     <CardDescription>
@@ -508,61 +604,40 @@ export function Dashboard() {
                       Add Variant
                     </Button>
                   </CardFooter>
-                </Card>
-                <Card x-chunk="dashboard-07-chunk-2">
+                </Card> */}
+                <Card>
                   <CardHeader>
                     <CardTitle>Product Category</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <div className="grid gap-6 sm:grid-cols-3">
-                      <div className="grid gap-3">
-                        <Label htmlFor="category">Category</Label>
-                        <Select>
-                          <SelectTrigger
-                            className="stocks"
-                            id="category"
-                            aria-label="Select category"
-                          >
-                            <SelectValue placeholder="Select category" />
-                          </SelectTrigger>
-                          <SelectContent className="stocks">
-                            <SelectItem value="clothing">Clothing</SelectItem>
-                            <SelectItem value="electronics">
-                              Electronics
+                    <div className="grid gap-3">
+                      <Label htmlFor="category">Category</Label>
+                      <Select
+                        value={edit.categoryId}
+                        onValueChange={(value) =>
+                          setEdit((prevEdit) => ({
+                            ...prevEdit,
+                            categoryId: value,
+                          }))
+                        }
+                      >
+                        <SelectTrigger className="stocks" id="category">
+                          <SelectValue placeholder="Select category" />
+                        </SelectTrigger>
+                        <SelectContent className="stocks">
+                          {categories.map((category) => (
+                            <SelectItem key={category._id} value={category._id}>
+                              {category.name}
                             </SelectItem>
-                            <SelectItem value="accessories">
-                              Accessories
-                            </SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                      <div className="grid gap-3">
-                        <Label htmlFor="subcategory">
-                          Subcategory (optional)
-                        </Label>
-                        <Select>
-                          <SelectTrigger
-                            className="stocks"
-                            id="subcategory"
-                            aria-label="Select subcategory"
-                          >
-                            <SelectValue placeholder="Select subcategory" />
-                          </SelectTrigger>
-                          <SelectContent className="stocks">
-                            <SelectItem value="t-shirts">T-Shirts</SelectItem>
-                            <SelectItem value="hoodies">Hoodies</SelectItem>
-                            <SelectItem value="sweatshirts">
-                              Sweatshirts
-                            </SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
+                          ))}
+                        </SelectContent>
+                      </Select>
                     </div>
                   </CardContent>
                 </Card>
               </div>
               <div className="grid auto-rows-max items-start gap-4 lg:gap-8">
-                <Card x-chunk="dashboard-07-chunk-3">
+                {/* <Card x-chunk="dashboard-07-chunk-3">
                   <CardHeader>
                     <CardTitle>Product Status</CardTitle>
                   </CardHeader>
@@ -587,7 +662,7 @@ export function Dashboard() {
                       </div>
                     </div>
                   </CardContent>
-                </Card>
+                </Card> */}
                 <Card
                   className="overflow-hidden"
                   x-chunk="dashboard-07-chunk-4"
@@ -599,20 +674,50 @@ export function Dashboard() {
                     </CardDescription>
                   </CardHeader>
                   <CardContent>
-                    <div className="grid gap-2">
-                      <img
-                        alt="Product image"
-                        className="aspect-square w-full rounded-md object-cover"
-                        height="300"
-                        src={edit.image}
-                        width="300"
-                      />
-                      <div className="grid grid-cols-3 gap-2">
-                        <button className="flex aspect-square w-full items-center justify-center rounded-md border border-dashed">
-                          <Upload className="h-4 w-4 text-muted-foreground" />
-                          <span className="sr-only">Upload</span>
-                        </button>
-                      </div>
+                    <div className="grid gap-2 relative">
+                      {edit.image && (
+                        <div className="aspect-square w-full rounded-md overflow-hidden">
+                          <img
+                            alt="Product image"
+                            className="w-full h-full object-cover"
+                            src={edit.image}
+                          />
+                          <button
+                            type="button"
+                            onClick={handleDeleteImage}
+                            className="absolute bottom-0 right-0 m-2 p-1 bg-red-500 text-white rounded-md hover:bg-red-600 focus:outline-none"
+                          >
+                            Delete
+                          </button>
+                        </div>
+                      )}
+                      {!edit.image && (
+                        <form className="upload">
+                          <label
+                            htmlFor="files"
+                            className="grid grid-cols-3 gap-2"
+                          >
+                            <button
+                              type="button"
+                              onClick={() =>
+                                document.getElementById("files").click()
+                              }
+                              className="flex aspect-square w-11 items-center justify-center rounded-md border border-dashed"
+                            >
+                              <Upload className="h-4 w-4 text-muted-foreground" />
+                              <span className="sr-only">Upload</span>
+                            </button>
+                            <input
+                              type="file"
+                              id="files"
+                              className="hidden"
+                              multiple
+                              required
+                              onChange={handleFileChange}
+                            />
+                          </label>
+                        </form>
+                      )}
                     </div>
                   </CardContent>
                 </Card>
@@ -636,7 +741,9 @@ export function Dashboard() {
               <Button variant="outline" size="sm">
                 Discard
               </Button>
-              <Button size="sm">Save Product</Button>
+              <Button size="sm" onClick={handleUpdateProduct}>
+                Save Product
+              </Button>
             </div>
           </div>
         </main>
