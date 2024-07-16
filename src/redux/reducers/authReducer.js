@@ -1,6 +1,7 @@
 const initialState = {
   token: null,
   userId: null,
+  email: null,
   fullname: null,
   gender: null,
   role: null,
@@ -14,6 +15,7 @@ const authReducer = (state = initialState, action) => {
         ...state,
         token: action.payload.token,
         userId: action.payload.userId,
+        email: action.payload.email,
         fullname: action.payload.fullname,
         gender: action.payload.gender,
         role: action.payload.role,
@@ -24,6 +26,7 @@ const authReducer = (state = initialState, action) => {
         ...state,
         token: null,
         userId: null,
+        email: null,
         fullname: null,
         gender: null,
         role: null,

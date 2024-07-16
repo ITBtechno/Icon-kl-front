@@ -8,6 +8,7 @@ import {
   faTimes,
   faRightFromBracket,
   faPenToSquare,
+  faUserGear,
 } from "@fortawesome/free-solid-svg-icons";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
@@ -29,19 +30,23 @@ export default function MainPage({ switchTheme, theme }) {
   // const [userId, setUserId] = useState(null);
   const [isModalUserOpen, setModalUserOpen] = useState(false);
   const [isModalUserLogoutOpen, setModalUserLogoutOpen] = useState(false);
-  // const [userName, setUserName] = useState("");
-  // const [userGender, setUserGender] = useState("");
+  const [userName, setUserName] = useState("");
+  const [userGender, setUserGender] = useState("");
   const dispatch = useDispatch();
 
   const token = useSelector((state) => state.auth.token);
   const userId = useSelector((state) => state.auth.userId);
-  const userName = useSelector((state) => state.auth.fullname);
-  const userGender = useSelector((state) => state.auth.gender);
+  const name = useSelector((state) => state.auth.fullname);
+  const gender = useSelector((state) => state.auth.gender);
+  const email = useSelector((state) => state.auth.email);
+  const userRole = useSelector((state) => state.auth.role);
   const isLoggedIn = !!token;
 
   useEffect(() => {
     const token = Cookies.get("accessToken");
     if (token) {
+
+      
       dispatch(loginSuccess(token));
     }
   }, [dispatch]);
@@ -138,13 +143,10 @@ export default function MainPage({ switchTheme, theme }) {
   const closeVerifyModal = () => {
     setVerifyModalOpen(false);
   };
-
   const handleUserUpdate = (e) => {
     e.preventDefault();
-    const decode = jwtDecode(token);
-    console.log("check decode" + decode.email);
     fetch(
-      `https://icon-karaoke-and-lounge-back.onrender.com/api/users/${decode.email}`,
+      `https://icon-karaoke-and-lounge-back.onrender.com/api/users/${email}`,
       {
         method: "PUT",
         headers: {
@@ -262,13 +264,18 @@ export default function MainPage({ switchTheme, theme }) {
           </div>
           <div className="header-right-side">
             <div className="header-right-side-top">
+              {userRole === "Admin" ? (
+                <Link to="/admin/orders">
+                  <FontAwesomeIcon id="basketIcon" icon={faUserGear} />
+                </Link>
+              ) : null}
               <Link className="basket" to="/basket">
                 <FontAwesomeIcon id="basketIcon" icon={faCartShopping} />
               </Link>
               {isLoggedIn ? (
                 <button className="user" onClick={openModalUserLogout}>
                   <FontAwesomeIcon icon={faUser} />
-                  <span>{jwtDecode(token).fullname}</span>
+                  <span>{name}</span>
                 </button>
               ) : (
                 <button id="log-in" className="user" onClick={open2Modal}>
@@ -329,7 +336,7 @@ export default function MainPage({ switchTheme, theme }) {
             {isLoggedIn ? (
               <button className="user" onClick={openModalUserLogout}>
                 <FontAwesomeIcon icon={faUser} />
-                <span>{jwtDecode(token).fullname}</span>
+                <span>{name}</span>
               </button>
             ) : (
               <button id="log-in" className="user" onClick={open2Modal}>

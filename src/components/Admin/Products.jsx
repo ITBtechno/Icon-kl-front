@@ -367,7 +367,7 @@ export function Dashboard() {
                             </TableCell>
                             <TableCell>
                               <Badge variant="outline" id="status">
-                                {product.categoryId.name}
+                                {product.categoryId?.name}
                               </Badge>
                             </TableCell>
                             <TableCell className="hidden md:table-cell">

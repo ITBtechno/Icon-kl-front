@@ -19,10 +19,10 @@ export const loginSuccess = (token) => {
     return { type: "INVALID_TOKEN" };
   }
 
-  const { userId, fullname, gender, role } = decodedToken;
+  const { userId, fullname, gender, role, email } = decodedToken;
   return {
     type: "LOGIN_SUCCESS",
-    payload: { token, userId, fullname, gender, role },
+    payload: { token, userId, fullname, gender, role, email },
   };
 };
 
