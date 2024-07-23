@@ -162,6 +162,14 @@
     width: 96% !important;
   }
 
+  .right {
+    z-index: 100 !important;
+  }
+
+  .hidden {
+    z-index: 98 !important;
+  }
+
   #price {
     background-color: black !important;
     width: 96% !important;
