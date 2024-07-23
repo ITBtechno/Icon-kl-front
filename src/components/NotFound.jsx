@@ -19,9 +19,6 @@ const NotFound = () => {
         <Link to="/">Back Home</Link>
       </button>
 
-      <p id="not-found-des">Seems like the page you were trying to find is no longer available</p>
-      <button className="back-home"><Link to="/">Back Home</Link></button>
-
     </div>
   );
 };
