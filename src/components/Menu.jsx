@@ -604,16 +604,10 @@ export default function Menu() {
                       <span className="foodName">{items.name}</span>
                       <span className="description">
                         {items.ingredients && items.ingredients.length > 0
-                          ? items.ingredients.slice(0, -1).join(", ") +
-                            (items.ingredients.length > 1
-                              ? `, ${
-                                  items.ingredients[
-                                    items.ingredients.length - 1
-                                  ]
-                                }`
-                              : "")
+                          ? items.ingredients.join(", ")
                           : "Lorem ipsum dolor sit amet consectetur adipisicing elit. Quidem."}
                       </span>
+
                       <button
                         className="price"
                         onClick={() => openPrdctModal(items)}
