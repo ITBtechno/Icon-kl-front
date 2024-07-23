@@ -7,6 +7,7 @@ import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import axios from "axios";
+import { Helmet } from "react-helmet";
 
 export default function Basket() {
   const [isModalOpen, setModalOpen] = useState(false);
@@ -203,6 +204,10 @@ export default function Basket() {
       exit={{ opacity: 0 }}
       transition={{ type: "spring", mass: 1, stiffness: 80, damping: 20 }}
     >
+      <Helmet>
+        <title>Basket</title>
+        <meta name="description" content="Your basket items." />
+      </Helmet>
       <div className="responsive-header">
         <div className="main-icon-basket">
           <img

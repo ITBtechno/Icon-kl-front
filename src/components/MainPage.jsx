@@ -18,6 +18,7 @@ import { loginSuccess, logout } from "../redux/actions/authActions";
 import { useDispatch, useSelector } from "react-redux";
 import Cookies from "js-cookie";
 import { useTranslation } from "react-i18next";
+import { Helmet } from "react-helmet";
 
 export default function MainPage({ switchTheme, theme }) {
   const [isModalOpen, setModalOpen] = useState(false);
@@ -45,8 +46,6 @@ export default function MainPage({ switchTheme, theme }) {
   useEffect(() => {
     const token = Cookies.get("accessToken");
     if (token) {
-
-      
       dispatch(loginSuccess(token));
     }
   }, [dispatch]);
@@ -220,6 +219,10 @@ export default function MainPage({ switchTheme, theme }) {
   };
   return (
     <div className="mainPage" data-theme={theme}>
+      <Helmet>
+        <title>Restaurant Main Page</title>
+        <meta name="description" content="Welcome to our restaurant" />
+      </Helmet>
       <div className="desktop-version">
         <div className="header">
           <div className="mp-header-left-side">

@@ -26,6 +26,7 @@ import { faCartShopping } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import debounce from "lodash.debounce";
 import { useTranslation } from "react-i18next";
+import { Helmet } from "react-helmet";
 
 export default function Menu() {
   const [input, setInput] = useState("");
@@ -355,6 +356,10 @@ export default function Menu() {
 
   return (
     <div className={`main-container ${theme}`}>
+      <Helmet>
+        <title>Menu</title>
+        <meta name="description" content="Explore our delicious menu." />
+      </Helmet>
       <div className="menu-header">
         <div className="main-icon-menu">
           <img
