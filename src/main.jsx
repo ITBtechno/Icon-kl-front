@@ -2,7 +2,8 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import App from "./App.jsx";
 import { Provider } from "react-redux";
-import store from "./redux/store/store.js";
+import { PersistGate } from "redux-persist/integration/react";
+import { store, persistor } from "./redux/store/store.js";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Basket from "./components/Basket.jsx";
 import Menu from "./components/Menu.jsx";
@@ -17,20 +18,22 @@ import NotFound from "./components/NotFound.jsx";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <Provider store={store}>
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<App />} />
-        <Route path="/menu" element={<Menu />} />
-        <Route path="/basket" element={<Basket />} />
-        <Route element={<PrivateRoute roles={["Admin"]} />}>
-          <Route path="/admin/orders" element={<Orders />} />
-          <Route path="/admin/customers" element={<Customers />} />
-          <Route path="/admin/products" element={<Products />} />
-          <Route path="/admin/:productId/edit" element={<EditProduct />} />
-          <Route path="/admin/addProduct" element={<AddProduct />} />
-          <Route path="*" component={<NotFound />} />
-        </Route>
-      </Routes>
-    </BrowserRouter>
+    <PersistGate loading={null} persistor={persistor}>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<App />} />
+          <Route path="/menu" element={<Menu />} />
+          <Route path="/basket" element={<Basket />} />
+          <Route element={<PrivateRoute roles={["Admin"]} />}>
+            <Route path="/admin/orders" element={<Orders />} />
+            <Route path="/admin/customers" element={<Customers />} />
+            <Route path="/admin/products" element={<Products />} />
+            <Route path="/admin/:productId/edit" element={<EditProduct />} />
+            <Route path="/admin/addProduct" element={<AddProduct />} />
+            <Route path="*" element={<NotFound />} />
+          </Route>
+        </Routes>
+      </BrowserRouter>
+    </PersistGate>
   </Provider>
 );
