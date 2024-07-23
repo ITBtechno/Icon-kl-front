@@ -20,6 +20,8 @@ export const loginSuccess = (token) => {
   }
 
   const { userId, fullname, gender, role, email } = decodedToken;
+  Cookies.set("userInfo", JSON.stringify(decodedToken), { expires: 7 });
+  
   return {
     type: "LOGIN_SUCCESS",
     payload: { token, userId, fullname, gender, role, email },
@@ -28,6 +30,7 @@ export const loginSuccess = (token) => {
 
 export const logout = () => {
   Cookies.remove("accessToken");
+  Cookies.remove("userInfo");
 
   return {
     type: "LOGOUT",

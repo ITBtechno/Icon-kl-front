@@ -98,7 +98,6 @@ export default function MainPage({ switchTheme, theme }) {
     // setUserId(userId);
     // setIsLoggedIn(true);
     closeModalUser();
-    setModalUserOpen(true);
   };
 
   const openModal = () => {
@@ -161,6 +160,11 @@ export default function MainPage({ switchTheme, theme }) {
     closeModalUser();
     setModalUserOpen(false);
   };
+
+  useEffect(() => {
+    setUserName(name);
+    setUserGender(gender);
+  }, [name, gender]);
 
   const handleSubmitEmail = async (e) => {
     e.preventDefault();
@@ -330,6 +334,13 @@ export default function MainPage({ switchTheme, theme }) {
       </div>
       <div className={`mobile-menu ${isMobileMenuOpen ? "open" : ""}`}>
         <ul>
+          {userRole === "Admin" ? (
+            <li>
+              <Link to="/admin/orders">
+                <FontAwesomeIcon id="basketIcon" icon={faUserGear} />
+              </Link>
+            </li>
+          ) : null}
           <li>
             <Link className="basket" to="/basket">
               <FontAwesomeIcon icon={faCartShopping} />
@@ -442,7 +453,7 @@ export default function MainPage({ switchTheme, theme }) {
         />
       )}
       {isModalUserOpen && (
-        <div id="myModal" className="modal2">
+        <div id="myModal" className={`modal2`}>
           <div className="modal-content2">
             <button className="close2" onClick={closeModalUser}>
               &times;
@@ -458,7 +469,7 @@ export default function MainPage({ switchTheme, theme }) {
                     name="name"
                     onChange={(e) => setUserName(e.target.value)}
                     value={userName}
-                  ></input>
+                  />
                 </div>
                 <div className="genders">
                   <div className="gender">
@@ -470,7 +481,7 @@ export default function MainPage({ switchTheme, theme }) {
                       value="male"
                       checked={userGender === "male"}
                       onChange={() => setUserGender("male")}
-                    ></input>
+                    />
                   </div>
                   <div className="gender">
                     <label htmlFor="female">{t("famale")}</label>
@@ -481,7 +492,7 @@ export default function MainPage({ switchTheme, theme }) {
                       value="female"
                       checked={userGender === "female"}
                       onChange={() => setUserGender("female")}
-                    ></input>
+                    />
                   </div>
                 </div>
                 <div className="continue">
