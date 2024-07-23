@@ -61,6 +61,8 @@ import {
 } from "@/components/ui/tooltip";
 import { TooltipProvider } from "@radix-ui/react-tooltip";
 import "./../styles/admin.css";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 
 export function Dashboard() {
   const [customers, setCustomers] = useState([]);
@@ -112,6 +114,74 @@ export function Dashboard() {
     }
   };
 
+  const makeUserAdmin = async (email) => {
+    try {
+      const response = await fetch(
+        `https://icon-karaoke-and-lounge-back.onrender.com/api/users/${email}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            // Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            role: "Admin",
+          }),
+        }
+      );
+      if (response.ok) {
+        setCustomers((prevCustomers) =>
+          prevCustomers.map((user) => {
+            if (user.email === email) {
+              return { ...user, role: "Admin" };
+            }
+            return user;
+          })
+        );
+      } else {
+        setError(`HTTP error: ${response.status}`);
+        console.error("HTTP error:", response.status);
+      }
+    } catch (error) {
+      setError(error.message);
+      console.error("Error:", error);
+    }
+  };
+
+  const makeAdminUser = async (email) => {
+    try {
+      const response = await fetch(
+        `https://icon-karaoke-and-lounge-back.onrender.com/api/users/${email}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            // Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            role: "User",
+          }),
+        }
+      );
+      if (response.ok) {
+        setCustomers((prevCustomers) =>
+          prevCustomers.map((user) => {
+            if (user.email === email) {
+              return { ...user, role: "User" };
+            }
+            return user;
+          })
+        );
+      } else {
+        setError(`HTTP error: ${response.status}`);
+        console.error("HTTP error:", response.status);
+      }
+    } catch (error) {
+      setError(error.message);
+      console.error("Error:", error);
+    }
+  };
+
   useEffect(() => {
     handleGetCustomers();
   }, []);
@@ -127,7 +197,7 @@ export function Dashboard() {
                   to="/"
                   className="group flex h-9 w-9 shrink-0 items-center justify-center gap-2 rounded-full bg-primary text-lg font-semibold text-primary-foreground md:h-8 md:w-8 md:text-base"
                 >
-                  <Package2 className="h-4 w-4 transition-all group-hover:scale-110" />
+                  <FontAwesomeIcon icon={faArrowLeft} />
                   <span className="sr-only">Back to home</span>
                 </Link>
               </TooltipTrigger>
@@ -418,6 +488,29 @@ export function Dashboard() {
                                     }
                                   >
                                     Delete
+                                  </DropdownMenuItem>
+                                  <DropdownMenuItem>
+                                    {customer.role === "User" ? (
+                                      <div
+                                        className="makeAdmin"
+                                        onClick={() =>
+                                          makeUserAdmin(customer.email)
+                                        }
+                                      >
+                                        <i className="fa-light fa-user-gear"></i>
+                                        <span>Make Admin</span>
+                                      </div>
+                                    ) : (
+                                      <div
+                                        className="makeAdmin"
+                                        onClick={() =>
+                                          makeAdminUser(customer.email)
+                                        }
+                                      >
+                                        <i className="fa-light fa-user"></i>
+                                        <span>Make User</span>
+                                      </div>
+                                    )}
                                   </DropdownMenuItem>
                                 </DropdownMenuContent>
                               </DropdownMenu>
