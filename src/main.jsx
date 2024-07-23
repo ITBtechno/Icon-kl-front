@@ -18,6 +18,7 @@ import NotFound from "./components/NotFound.jsx";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <Provider store={store}>
+<<<<<<< Updated upstream
     <PersistGate loading={null} persistor={persistor}>
       <BrowserRouter>
         <Routes>
@@ -35,5 +36,22 @@ ReactDOM.createRoot(document.getElementById("root")).render(
         </Routes>
       </BrowserRouter>
     </PersistGate>
+=======
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<App />} />
+        <Route path="/menu" element={<Menu />} />
+        <Route path="/basket" element={<Basket />} />
+        <Route element={<PrivateRoute roles={["Admin"]} />}>
+          <Route path="/admin/orders" element={<Orders />} />
+          <Route path="/admin/customers" element={<Customers />} />
+          <Route path="/admin/products" element={<Products />} />
+          <Route path="/admin/:productId/edit" element={<EditProduct />} />
+          <Route path="/admin/addProduct" element={<AddProduct />} />
+        </Route>
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+    </BrowserRouter>
+>>>>>>> Stashed changes
   </Provider>
 );
