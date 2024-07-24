@@ -645,13 +645,7 @@ hr {
   width: 50rem;
   height: 50rem;
 }
-/* .input-search:focus ~ .search-list {
-  display: block;
-    position: absolute;
-  z-index: 10001;
-  top: 40px;
-  right: 20px;
-} */
+
 
 .search-list {
   display: none;
@@ -833,10 +827,7 @@ padding-right: 30px;
   .header-right-side{
    margin-right: -10px;
   }
-  /* .header-left-side-top,
-  .header-right-side-top {
-    gap: 20px;
-  } */
+
   .hr{
     width: 270px !important;
   }

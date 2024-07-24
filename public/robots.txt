@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /menu/
+Allow: /basket/

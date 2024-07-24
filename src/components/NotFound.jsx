@@ -1,13 +1,18 @@
 import React from "react";
 import "../components/styles/NotFound.css";
 import { Link } from "react-router-dom";
+import { Helmet } from "react-helmet";
 
 const NotFound = () => {
   return (
     <div className="not-found">
+      <Helmet>
+        <title>Restaurant Main Page</title>
+        <meta name="description" content="Not Found Page" />
+      </Helmet>
       <div className="main">
         <p>4</p>
-        <img src=".././public/assets/404-pizza.webp" alt="" />
+        <img src=".././public/assets/404-pizza.webp" alt="pizza" />
         <p>4</p>
       </div>
       <p id="whoops">Whoops, nothing delicious to find here.</p>
@@ -18,7 +23,6 @@ const NotFound = () => {
       <button className="back-home">
         <Link to="/">Back Home</Link>
       </button>
-
     </div>
   );
 };
