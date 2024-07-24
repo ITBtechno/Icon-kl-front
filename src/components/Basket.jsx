@@ -214,7 +214,7 @@ export default function Basket() {
             width={"100px"}
             height={"50px"}
             src="./assets/original-icon.png"
-            alt=""
+            alt="icon"
           />
         </div>
         <Link to="/menu">
@@ -281,7 +281,7 @@ export default function Basket() {
             width={"200px"}
             height={"113px"}
             src="./assets/original-icon.png"
-            alt=""
+            alt="icon"
           />
         </Link>
         <div className="basket-header-right-side">
@@ -315,7 +315,7 @@ export default function Basket() {
           {theOrders.length === 0 ? (
             <div className="empty-basket">
               <div id="empty">
-                <img className="empty" src="./assets/cart.fill (2).png" />
+                <img className="empty" src="./assets/cart.fill (2).png" alt="cart" />
                 <div className="texts">
                   <div id="emptyText">{t("pls")}</div>
                   <div id="emptyText">{t("add product")}</div>
@@ -376,7 +376,7 @@ export default function Basket() {
                                     handleRemoveFromBasket(order._id)
                                   }
                                 >
-                                  <img src="./assets/trash-icon.png" alt="" />
+                                  <img src="./assets/trash-icon.png" alt="remove" />
                                 </button>
                               )}
                             </button>

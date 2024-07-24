@@ -13,22 +13,20 @@ import {
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import VerifyModal from "./VerifyModal";
-import { jwtDecode } from "jwt-decode";
 import { loginSuccess, logout } from "../redux/actions/authActions";
 import { useDispatch, useSelector } from "react-redux";
 import Cookies from "js-cookie";
 import { useTranslation } from "react-i18next";
 import { Helmet } from "react-helmet";
 
-export default function MainPage({ switchTheme, theme }) {
+export default function MainPage() {
   const [isModalOpen, setModalOpen] = useState(false);
   const [isModal2Open, setModal2Open] = useState(false);
   const [isVerifyModalOpen, setVerifyModalOpen] = useState(false);
   const [emailForVerification, setEmailForVerification] = useState("");
   const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [accessToken, setAccessToken] = useState(null);
-  // const [isLoggedIn, setIsLoggedIn] = useState(false);
-  // const [userId, setUserId] = useState(null);
+  
   const [isModalUserOpen, setModalUserOpen] = useState(false);
   const [isModalUserLogoutOpen, setModalUserLogoutOpen] = useState(false);
   const [userName, setUserName] = useState("");
@@ -50,39 +48,7 @@ export default function MainPage({ switchTheme, theme }) {
     }
   }, [dispatch]);
 
-  // const handleLogout = () => {
-  //   dispatch(logout());
-  //   setModalUserLogoutOpen(false);
-  // };
 
-  // useEffect(() => {
-  //   const token = Cookies.get("accessToken");
-  //   if (token) {
-  //     handleDecodeToken(token);
-  //     console.log(token);
-  //   }
-  //   const storedUserName = Cookies.get("userFullName");
-  //   const storedUserGender = Cookies.get("userGender");
-  //   if (storedUserName) {
-  //     setUserName(storedUserName);
-  //   }
-  //   if (storedUserGender) {
-  //     setUserGender(storedUserGender);
-  //   }
-  // }, []);
-
-  // const handleDecodeToken = (token) => {
-  //   try {
-  //     const decodedToken = jwtDecode(token);
-  //     console.log(jwtDecode(token));
-  //     const userId = decodedToken.userId;
-  //     setUserId(userId);
-  //     setIsLoggedIn(true);
-  //     dispatch(loginSuccess(token, userId));
-  //   } catch (error) {
-  //     console.error("Error decoding token:", error);
-  //   }
-  // };
 
   const handleLogout = () => {
     setModalUserLogoutOpen(false);
@@ -95,8 +61,7 @@ export default function MainPage({ switchTheme, theme }) {
   };
 
   const handleVerificationSuccess = (userId) => {
-    // setUserId(userId);
-    // setIsLoggedIn(true);
+   
     closeModalUser();
   };
 
@@ -222,7 +187,7 @@ export default function MainPage({ switchTheme, theme }) {
     setModalOpen(false);
   };
   return (
-    <div className="mainPage" data-theme={theme}>
+    <div className="mainPage" >
       <Helmet>
         <title>Restaurant Main Page</title>
         <meta name="description" content="Welcome to our restaurant" />
@@ -266,7 +231,7 @@ export default function MainPage({ switchTheme, theme }) {
               width={"200px"}
               height={"113px"}
               src="./assets/original-icon.png"
-              alt=""
+              alt="icon"
             />
           </div>
           <div className="header-right-side">
@@ -293,7 +258,7 @@ export default function MainPage({ switchTheme, theme }) {
                 href="https://api.whatsapp.com/send/?phone=%2B994553532243&text}"
                 target="_blank"
               >
-                <img className="call" src="./assets/call (1).png" />
+                <img className="call" src="./assets/call (1).png"  alt="call"/>
               </a>
               <button className="language" onClick={openModal}>
                 {" "}

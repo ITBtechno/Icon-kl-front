@@ -7,14 +7,13 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import "swiper/css/free-mode";
 import "swiper/css/pagination";
-import { useTheme } from "@mui/material/styles";
 import OutlinedInput from "@mui/material/OutlinedInput";
 import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
-import { useThemeManager } from "./theme";
-import { useDispatch, useSelector } from "react-redux";
+
+import { useDispatch } from "react-redux";
 import { Pagination, Stack } from "@mui/material";
 import {
   incrementCount,
@@ -31,7 +30,6 @@ import { Helmet } from "react-helmet";
 export default function Menu() {
   const [input, setInput] = useState("");
   const [isModal4Open, setModal4Open] = useState(false);
-  const { theme, switchTheme } = useThemeManager();
   const [isModalOpen, setModalOpen] = useState(false);
   const [modalPrdctOpen, setModalPrdctOpen] = useState(false);
   const dispatch = useDispatch();
@@ -41,10 +39,7 @@ export default function Menu() {
   const [items, setItems] = useState([]);
   const [activeProduct, setActiveProduct] = useState(null);
 
-  // const handleAddToCart = () => {
-  //   dispatch(addToOrder(activeProduct));
-  //   setModalPrdctOpen(false);
-  // };
+
 
   const handleAddToCartFromSearchList = (product) => {
     dispatch(addToOrder({ ...product, count: 1 }));
@@ -185,16 +180,13 @@ export default function Menu() {
     "Xardal",
     "Küncüt",
   ];
-  function getStyles(name, personName, thetheme) {
+  function getStyles(name, personName) {
     return {
       fontWeight:
         personName.indexOf(name) === -1
-          ? thetheme.typography.fontWeightRegular
-          : thetheme.typography.fontWeightMedium,
     };
   }
 
-  const thetheme = useTheme();
   const [personName, setPersonName] = React.useState([]);
 
   const resetFilters = () => {
@@ -355,7 +347,7 @@ export default function Menu() {
   };
 
   return (
-    <div className={`main-container ${theme}`}>
+    <div className={`main-container `}>
       <Helmet>
         <title>Menu</title>
         <meta name="description" content="Explore our delicious menu." />
@@ -366,7 +358,7 @@ export default function Menu() {
             width={"100px"}
             height={"50px"}
             src="./assets/original-icon.png"
-            alt=""
+            alt="icon"
           />
         </div>
         <div className="header-left-side">
@@ -452,7 +444,7 @@ export default function Menu() {
               </div>
             </div>
             <button onClick={open4Modal}>
-              <img className="filter-icon" src="./assets/align-right.png" />
+              <img className="filter-icon" src="./assets/align-right.png" alt="filter" />
             </button>
           </div>
           <motion.hr
@@ -490,46 +482,9 @@ export default function Menu() {
           </svg>
         </Link>
         <div id="searchFilter">
-          {/* <div ref={searchBoxRef} className={` ${expanded ? "expanded" : ""}`}>
-            <div className="search-box">
-              <button
-                type="button"
-                className="btn-search"
-                onClick={toggleExpanded}
-              >
-                <img src="./assets/search (1).png" alt="search" />
-              </button>
-              <input
-                type="text"
-                className="input-search"
-                placeholder="Search"
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                onKeyUp={handleKeyUp}
-              />
-            </div>
 
-            <div style={{ display: isSearchListVisible ? 'block' : 'none' }} className="search-list">
-              {items.map((meal) => (
-                <div key={meal._id}>
-                  <div className="search-list-item">
-                    <div className="search-list-content">
-                      <h5>{meal.name}</h5>
-                      <p>{meal.price} ₼</p>
-                    </div>
-                    <button onClick={() => handleAddToCartFromSearchList(meal)}>
-                      <FontAwesomeIcon
-                        className="search-list-image"
-                        icon={faCartShopping}
-                      />
-                    </button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div> */}
           <button onClick={open4Modal}>
-            <img className="filter-icon" src="./assets/align-right.png" />
+            <img className="filter-icon" src="./assets/align-right.png"alt="filter" />
           </button>
         </div>
       </div>
@@ -549,9 +504,7 @@ export default function Menu() {
           simulateTouch={true}
           touchReleaseOnEdges={true}
           modules={[FreeMode, Keyboard, Mousewheel]}
-          className={`mySwiper ${
-            theme === "light" ? "light-theme" : "dark-theme"
-          }`}
+          className={`mySwiper `}
         >
           {categories.map((category) => (
             <SwiperSlide key={category._id} className="swiper-slide-auto">
@@ -604,16 +557,10 @@ export default function Menu() {
                       <span className="foodName">{items.name}</span>
                       <span className="description">
                         {items.ingredients && items.ingredients.length > 0
-                          ? items.ingredients.slice(0, -1).join(", ") +
-                            (items.ingredients.length > 1
-                              ? `, ${
-                                  items.ingredients[
-                                    items.ingredients.length - 1
-                                  ]
-                                }`
-                              : "")
+                          ? items.ingredients.join(", ")
                           : "Lorem ipsum dolor sit amet consectetur adipisicing elit. Quidem."}
                       </span>
+
                       <button
                         className="price"
                         onClick={() => openPrdctModal(items)}
@@ -652,7 +599,8 @@ export default function Menu() {
       <div>
         <Link to="/basket">
           <div className="basket2">
-            <img src="./assets/shopping-cart.png" />
+            <img src="./assets/shopping-cart.png" alt="cart"
+            />
           </div>
         </Link>
       </div>
@@ -835,7 +783,7 @@ export default function Menu() {
                         className="allergies-names-filtering"
                         key={name}
                         value={name}
-                        style={getStyles(name, personName, thetheme)}
+                        style={getStyles(name, personName)}
                       >
                         {name}
                       </MenuItem>
