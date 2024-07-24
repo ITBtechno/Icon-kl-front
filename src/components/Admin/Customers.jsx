@@ -63,12 +63,13 @@ import { TooltipProvider } from "@radix-ui/react-tooltip";
 import "./../styles/admin.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
+import { useSelector } from "react-redux";
 
 export function Dashboard() {
   const [customers, setCustomers] = useState([]);
   const [error, setError] = useState(null);
   const { token } = useSelector((state) => state.auth);
-  
+
   const handleGetCustomers = async () => {
     try {
       const response = await fetch(
@@ -131,7 +132,7 @@ export function Dashboard() {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
-            // Authorization: `Bearer ${token}`,
+            Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify({
             role: "Admin",
@@ -165,7 +166,7 @@ export function Dashboard() {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
-            // Authorization: `Bearer ${token}`,
+            Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify({
             role: "User",

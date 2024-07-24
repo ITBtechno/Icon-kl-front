@@ -69,6 +69,7 @@ import {
 import { TooltipProvider } from "@radix-ui/react-tooltip";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
+import { useSelector } from "react-redux";
 
 export function Dashboard() {
   const [edit, setEdit] = useState({
@@ -80,6 +81,7 @@ export function Dashboard() {
   });
   const [error, setError] = useState(null);
   const [categories, setCategories] = useState([]);
+  const { token } = useSelector((state) => state.auth);
   let { productId } = useParams();
 
   const handleGetEdit = async () => {
@@ -88,6 +90,10 @@ export function Dashboard() {
         `https://icon-karaoke-and-lounge-back.onrender.com/api/items/${productId}`,
         {
           method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
         }
       );
 
@@ -130,6 +136,7 @@ export function Dashboard() {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify(edit),
         }

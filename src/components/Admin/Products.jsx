@@ -63,10 +63,12 @@ import { TooltipProvider } from "@radix-ui/react-tooltip";
 import "./../styles/admin.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
+import { useSelector } from "react-redux";
 
 export function Dashboard() {
   const [products, setProducts] = useState([]);
   const [error, setError] = useState(null);
+  const { token } = useSelector((state) => state.auth);
 
   const handleGetProducts = async () => {
     try {
@@ -97,6 +99,10 @@ export function Dashboard() {
         `https://icon-karaoke-and-lounge-back.onrender.com/api/items/${id}`,
         {
           method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
         }
       );
 

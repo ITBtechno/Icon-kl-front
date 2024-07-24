@@ -71,7 +71,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { TooltipProvider } from "@radix-ui/react-tooltip";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { loginSuccess } from "../../redux/actions/authActions";
 import Cookies from "js-cookie";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -81,6 +81,7 @@ export function Dashboard() {
   const [orders, setOrders] = useState([]);
   const [error, setError] = useState(null);
   const dispatch = useDispatch();
+  const { token } = useSelector((state) => state.auth);
 
   useEffect(() => {
     const token = Cookies.get("accessToken");
@@ -95,6 +96,10 @@ export function Dashboard() {
         "https://icon-karaoke-and-lounge-back.onrender.com/api/orders/",
         {
           method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
         }
       );
 

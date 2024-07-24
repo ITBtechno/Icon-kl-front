@@ -26,7 +26,7 @@ export default function MainPage() {
   const [emailForVerification, setEmailForVerification] = useState("");
   const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [accessToken, setAccessToken] = useState(null);
-  
+
   const [isModalUserOpen, setModalUserOpen] = useState(false);
   const [isModalUserLogoutOpen, setModalUserLogoutOpen] = useState(false);
   const [userName, setUserName] = useState("");
@@ -48,8 +48,6 @@ export default function MainPage() {
     }
   }, [dispatch]);
 
-
-
   const handleLogout = () => {
     setModalUserLogoutOpen(false);
     dispatch(logout());
@@ -61,7 +59,6 @@ export default function MainPage() {
   };
 
   const handleVerificationSuccess = (userId) => {
-   
     closeModalUser();
   };
 
@@ -114,6 +111,7 @@ export default function MainPage() {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
           fullname: userName,
@@ -187,7 +185,7 @@ export default function MainPage() {
     setModalOpen(false);
   };
   return (
-    <div className="mainPage" >
+    <div className="mainPage">
       <Helmet>
         <title>Restaurant Main Page</title>
         <meta name="description" content="Welcome to our restaurant" />
@@ -258,7 +256,7 @@ export default function MainPage() {
                 href="https://api.whatsapp.com/send/?phone=%2B994553532243&text}"
                 target="_blank"
               >
-                <img className="call" src="./assets/call (1).png"  alt="call"/>
+                <img className="call" src="./assets/call (1).png" alt="call" />
               </a>
               <button className="language" onClick={openModal}>
                 {" "}
