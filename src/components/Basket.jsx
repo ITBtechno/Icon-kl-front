@@ -96,7 +96,7 @@ export default function Basket() {
     const { countryCode, phoneNumber } = extractCountryAndNumber(phoneValue);
     try {
       const response = await axios.post(
-        "https://icon-karaoke-and-lounge-back.onrender.com/api/otp/send",
+        "https://icon-kl-back.onrender.com/api/otp/send",
         { countryCode, phoneNumber }
       );
       console.log("Response:", response);
@@ -118,7 +118,7 @@ export default function Basket() {
     const email = e.target.email.value;
     try {
       const response = await fetch(
-        "https://icon-karaoke-and-lounge-back.onrender.com/api/otp/send",
+        "https://icon-kl-back.onrender.com/api/otp/send",
         {
           method: "POST",
           headers: {

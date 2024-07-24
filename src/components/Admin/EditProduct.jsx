@@ -87,7 +87,7 @@ export function Dashboard() {
   const handleGetEdit = async () => {
     try {
       const response = await fetch(
-        `https://icon-karaoke-and-lounge-back.onrender.com/api/items/${productId}`,
+        `https://icon-kl-back.onrender.com/api/items/${productId}`,
         {
           method: "GET",
           headers: {
@@ -114,7 +114,7 @@ export function Dashboard() {
   const handleFetchCategories = async () => {
     try {
       const response = await fetch(
-        `https://icon-karaoke-and-lounge-back.onrender.com/api/categories`
+        `https://icon-kl-back.onrender.com/api/categories`
       );
 
       if (response.ok) {
@@ -131,7 +131,7 @@ export function Dashboard() {
   const handleUpdateProduct = async () => {
     try {
       const response = await fetch(
-        `https://icon-karaoke-and-lounge-back.onrender.com/api/items/${productId}`,
+        `https://icon-kl-back.onrender.com/api/items/${productId}`,
         {
           method: "PUT",
           headers: {

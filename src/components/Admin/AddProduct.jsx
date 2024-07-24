@@ -78,7 +78,7 @@ export function Dashboard() {
     const fetchCategories = async () => {
       try {
         const response = await fetch(
-          "https://icon-karaoke-and-lounge-back.onrender.com/api/categories"
+          "https://icon-kl-back.onrender.com/api/categories"
         );
         const data = await response.json();
         setCategoryOptions(data);
@@ -124,7 +124,7 @@ export function Dashboard() {
 
     try {
       const response = await fetch(
-        "https://icon-karaoke-and-lounge-back.onrender.com/api/items",
+        "https://icon-kl-back.onrender.com/api/items",
         {
           method: "POST",
           headers: {

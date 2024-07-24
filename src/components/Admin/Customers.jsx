@@ -73,7 +73,7 @@ export function Dashboard() {
   const handleGetCustomers = async () => {
     try {
       const response = await fetch(
-        "https://icon-karaoke-and-lounge-back.onrender.com/api/users/",
+        "https://icon-kl-back.onrender.com/api/users/",
         {
           method: "GET",
           headers: {
@@ -102,7 +102,7 @@ export function Dashboard() {
 
     try {
       const response = await fetch(
-        `https://icon-karaoke-and-lounge-back.onrender.com/api/users/${email}`,
+        `https://icon-kl-back.onrender.com/api/users/${email}`,
         {
           method: "DELETE",
           headers: {
@@ -128,7 +128,7 @@ export function Dashboard() {
     try {
       console.log(`Making user with email ${email} an admin`);
       const response = await fetch(
-        `https://icon-karaoke-and-lounge-back.onrender.com/api/users/${email}`,
+        `https://icon-kl-back.onrender.com/api/users/${email}`,
         {
           method: "PUT",
           headers: {
@@ -167,7 +167,7 @@ export function Dashboard() {
     try {
       console.log(`Making admin with email ${email} a user`);
       const response = await fetch(
-        `https://icon-karaoke-and-lounge-back.onrender.com/api/users/${email}`,
+        `https://icon-kl-back.onrender.com/api/users/${email}`,
         {
           method: "PUT",
           headers: {

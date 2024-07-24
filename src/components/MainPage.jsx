@@ -106,20 +106,17 @@ export default function MainPage() {
 
   const handleUserUpdate = (e) => {
     e.preventDefault();
-    fetch(
-      `https://icon-karaoke-and-lounge-back.onrender.com/api/users/${email}`,
-      {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          fullname: userName,
-          gender: userGender,
-        }),
-      }
-    );
+    fetch(`https://icon-kl-back.onrender.com/api/users/${email}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        fullname: userName,
+        gender: userGender,
+      }),
+    });
 
     closeModalUser();
     setModalUserOpen(false);
@@ -135,7 +132,7 @@ export default function MainPage() {
     const email = e.target.email.value;
     try {
       const response = await fetch(
-        "https://icon-karaoke-and-lounge-back.onrender.com/api/otp/send",
+        "https://icon-kl-back.onrender.com/api/otp/send",
         {
           method: "POST",
           headers: {

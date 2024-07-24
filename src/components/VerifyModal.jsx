@@ -37,7 +37,7 @@ const VerifyModal = ({ isOpen, onClose, email, onSuccess }) => {
     const otp = otpDigits.join("");
     try {
       const response = await fetch(
-        `https://icon-karaoke-and-lounge-back.onrender.com/api/otp/verify/${email}`,
+        `https://icon-kl-back.onrender.com/api/otp/verify/${email}`,
         {
           method: "POST",
           headers: {

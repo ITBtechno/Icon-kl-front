@@ -245,7 +245,7 @@ export default function Menu() {
   const fetchData = async (value) => {
     try {
       const response = await fetch(
-        `https://icon-karaoke-and-lounge-back.onrender.com/api/categories-with-items`
+        `https://icon-kl-back.onrender.com/api/categories-with-items`
       );
       const data = await response.json();
 
@@ -317,9 +317,7 @@ export default function Menu() {
   };
 
   useEffect(() => {
-    fetch(
-      "https://icon-karaoke-and-lounge-back.onrender.com/api/categories-with-items"
-    )
+    fetch("https://icon-kl-back.onrender.com/api/categories-with-items")
       .then((response) => response.json())
       .then((data) => {
         setActiveTab(data.length > 0 ? data[0] : null);

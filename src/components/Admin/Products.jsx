@@ -73,7 +73,7 @@ export function Dashboard() {
   const handleGetProducts = async () => {
     try {
       const response = await fetch(
-        "https://icon-karaoke-and-lounge-back.onrender.com/api/items-with-category",
+        "https://icon-kl-back.onrender.com/api/items-with-category",
         {
           method: "GET",
         }
@@ -96,7 +96,7 @@ export function Dashboard() {
   const handleDeleteProduct = async (id) => {
     try {
       const response = await fetch(
-        `https://icon-karaoke-and-lounge-back.onrender.com/api/items/${id}`,
+        `https://icon-kl-back.onrender.com/api/items/${id}`,
         {
           method: "DELETE",
           headers: {
