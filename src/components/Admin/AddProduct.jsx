@@ -111,9 +111,16 @@ export function Dashboard() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const formDataToSend = new FormData();
+
     Object.entries(formData).forEach(([key, value]) => {
-      formDataToSend.append(key, value);
+      if (value !== null && value !== "") {
+        formDataToSend.append(key, value);
+      }
     });
+
+    if (formData.image) {
+      formDataToSend.append("image", formData.image);
+    }
 
     try {
       const response = await fetch(
@@ -121,16 +128,17 @@ export function Dashboard() {
         {
           method: "POST",
           headers: {
-            "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
           body: formDataToSend,
         }
       );
+
       if (response.ok) {
         console.log("Product added successfully!");
       } else {
-        console.error("Failed to add product.");
+        const errorData = await response.json();
+        console.error("Failed to add product:", errorData);
       }
     } catch (error) {
       console.error("Error adding product:", error);
@@ -158,18 +166,6 @@ export function Dashboard() {
             </Tooltip>
           </TooltipProvider>
           <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Link
-                  href="#"
-                  className="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-foreground md:h-8 md:w-8"
-                >
-                  <Home className="h-5 w-5" />
-                  <span className="sr-only">Dashboard</span>
-                </Link>
-              </TooltipTrigger>
-              <TooltipContent side="right">Dashboard</TooltipContent>
-            </Tooltip>
             <Tooltip>
               <TooltipTrigger asChild>
                 <Link
@@ -208,18 +204,6 @@ export function Dashboard() {
                 </Link>
               </TooltipTrigger>
               <TooltipContent side="right">Customers</TooltipContent>
-            </Tooltip>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Link
-                  href="#"
-                  className="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-foreground md:h-8 md:w-8"
-                >
-                  <LineChart className="h-5 w-5" />
-                  <span className="sr-only">Analytics</span>
-                </Link>
-              </TooltipTrigger>
-              <TooltipContent side="right">Analytics</TooltipContent>
             </Tooltip>
           </TooltipProvider>
         </nav>
@@ -366,9 +350,6 @@ export function Dashboard() {
               <h1 className="flex-1 shrink-0 whitespace-nowrap text-xl font-semibold tracking-tight sm:grow-0">
                 Add Product
               </h1>
-              {/* <Badge variant="outline" className="ml-auto sm:ml-0">
-                In stock
-              </Badge> */}
               <div className="hidden items-center gap-2 md:ml-auto md:flex">
                 <Button variant="outline" size="sm" id="discardBtn">
                   Discard
@@ -437,9 +418,9 @@ export function Dashboard() {
                 >
                   <CardHeader>
                     <CardTitle>Product Image</CardTitle>
-                    <CardDescription>
+                    {/* <CardDescription>
                       Lipsum dolor sit amet, consectetur adipiscing elit
-                    </CardDescription>
+                    </CardDescription> */}
                   </CardHeader>
                   <CardContent>
                     <div className="grid gap-2 relative">

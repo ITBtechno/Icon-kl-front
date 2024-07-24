@@ -103,6 +103,7 @@ export default function MainPage() {
   const closeVerifyModal = () => {
     setVerifyModalOpen(false);
   };
+
   const handleUserUpdate = (e) => {
     e.preventDefault();
     fetch(

@@ -147,18 +147,6 @@ export function Dashboard() {
             <Tooltip>
               <TooltipTrigger asChild>
                 <Link
-                  href="#"
-                  className="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-foreground md:h-8 md:w-8"
-                >
-                  <Home className="h-5 w-5" />
-                  <span className="sr-only">Dashboard</span>
-                </Link>
-              </TooltipTrigger>
-              <TooltipContent side="right">Dashboard</TooltipContent>
-            </Tooltip>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Link
                   to="/admin/orders"
                   href="#"
                   className="flex h-9 w-9 items-center justify-center rounded-lg bg-accent text-accent-foreground transition-colors hover:text-foreground md:h-8 md:w-8"
@@ -193,18 +181,6 @@ export function Dashboard() {
                 </Link>
               </TooltipTrigger>
               <TooltipContent side="right">Customers</TooltipContent>
-            </Tooltip>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Link
-                  href="#"
-                  className="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-foreground md:h-8 md:w-8"
-                >
-                  <LineChart className="h-5 w-5" />
-                  <span className="sr-only">Analytics</span>
-                </Link>
-              </TooltipTrigger>
-              <TooltipContent side="right">Analytics</TooltipContent>
             </Tooltip>
           </TooltipProvider>
         </nav>
@@ -406,11 +382,11 @@ export function Dashboard() {
                             <TableCell className="font-medium">
                               {product.name}
                             </TableCell>
-                            {/* <TableCell>
+                            <TableCell>
                               <Badge variant="outline" id="status">
                                 {product.categoryId?.name}
                               </Badge>
-                            </TableCell> */}
+                            </TableCell>
                             <TableCell className="hidden md:table-cell">
                               {product.price}
                             </TableCell>

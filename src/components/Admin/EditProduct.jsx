@@ -200,18 +200,6 @@ export function Dashboard() {
             <Tooltip>
               <TooltipTrigger asChild>
                 <Link
-                  href="#"
-                  className="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-foreground md:h-8 md:w-8"
-                >
-                  <Home className="h-5 w-5" />
-                  <span className="sr-only">Dashboard</span>
-                </Link>
-              </TooltipTrigger>
-              <TooltipContent side="right">Dashboard</TooltipContent>
-            </Tooltip>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Link
                   to="/admin/orders"
                   href="#"
                   className="flex h-9 w-9 items-center justify-center rounded-lg bg-accent text-accent-foreground transition-colors hover:text-foreground md:h-8 md:w-8"
@@ -247,18 +235,6 @@ export function Dashboard() {
                 </Link>
               </TooltipTrigger>
               <TooltipContent side="right">Customers</TooltipContent>
-            </Tooltip>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Link
-                  href="#"
-                  className="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-foreground md:h-8 md:w-8"
-                >
-                  <LineChart className="h-5 w-5" />
-                  <span className="sr-only">Analytics</span>
-                </Link>
-              </TooltipTrigger>
-              <TooltipContent side="right">Analytics</TooltipContent>
             </Tooltip>
           </TooltipProvider>
         </nav>
@@ -481,215 +457,17 @@ export function Dashboard() {
                     </div>
                   </CardContent>
                 </Card>
-                {/* <Card x-chunk="dashboard-07-chunk-1">
-                  <CardHeader>
-                    <CardTitle>Stock</CardTitle>
-                    <CardDescription>
-                      Lipsum dolor sit amet, consectetur adipiscing elit
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <Table>
-                      <TableHeader>
-                        <TableRow>
-                          <TableHead className="w-[100px]">SKU</TableHead>
-                          <TableHead>Stock</TableHead>
-                          <TableHead>Price</TableHead>
-                          <TableHead className="w-[100px]">Size</TableHead>
-                        </TableRow>
-                      </TableHeader>
-                      <TableBody>
-                        <TableRow>
-                          <TableCell className="font-semibold">
-                            GGPC-001
-                          </TableCell>
-                          <TableCell>
-                            <Label htmlFor="stock-1" className="sr-only">
-                              Stock
-                            </Label>
-                            <Input
-                              className="stocks"
-                              id="stock-1"
-                              type="number"
-                              defaultValue="100"
-                            />
-                          </TableCell>
-                          <TableCell>
-                            <Label htmlFor="price-1" className="sr-only">
-                              Price
-                            </Label>
-                            <Input
-                              className="stocks"
-                              id="price-1"
-                              type="number"
-                              defaultValue="99.99"
-                            />
-                          </TableCell>
-                          <TableCell>
-                            <ToggleGroup
-                              type="single"
-                              defaultValue="s"
-                              variant="outline"
-                            >
-                              <ToggleGroupItem value="s">S</ToggleGroupItem>
-                              <ToggleGroupItem value="m">M</ToggleGroupItem>
-                              <ToggleGroupItem value="l">L</ToggleGroupItem>
-                            </ToggleGroup>
-                          </TableCell>
-                        </TableRow>
-                        <TableRow>
-                          <TableCell className="font-semibold">
-                            GGPC-002
-                          </TableCell>
-                          <TableCell>
-                            <Label htmlFor="stock-2" className="sr-only">
-                              Stock
-                            </Label>
-                            <Input
-                              className="stocks"
-                              id="stock-2"
-                              type="number"
-                              defaultValue="143"
-                            />
-                          </TableCell>
-                          <TableCell>
-                            <Label htmlFor="price-2" className="sr-only">
-                              Price
-                            </Label>
-                            <Input
-                              className="stocks"
-                              id="price-2"
-                              type="number"
-                              defaultValue="99.99"
-                            />
-                          </TableCell>
-                          <TableCell>
-                            <ToggleGroup
-                              type="single"
-                              defaultValue="m"
-                              variant="outline"
-                            >
-                              <ToggleGroupItem value="s">S</ToggleGroupItem>
-                              <ToggleGroupItem value="m">M</ToggleGroupItem>
-                              <ToggleGroupItem value="l">L</ToggleGroupItem>
-                            </ToggleGroup>
-                          </TableCell>
-                        </TableRow>
-                        <TableRow>
-                          <TableCell className="font-semibold">
-                            GGPC-003
-                          </TableCell>
-                          <TableCell>
-                            <Label htmlFor="stock-3" className="sr-only">
-                              Stock
-                            </Label>
-                            <Input
-                              className="stocks"
-                              id="stock-3"
-                              type="number"
-                              defaultValue="32"
-                            />
-                          </TableCell>
-                          <TableCell>
-                            <Label htmlFor="price-3" className="sr-only">
-                              Stock
-                            </Label>
-                            <Input
-                              className="stocks"
-                              id="price-3"
-                              type="number"
-                              defaultValue="99.99"
-                            />
-                          </TableCell>
-                          <TableCell>
-                            <ToggleGroup
-                              type="single"
-                              defaultValue="s"
-                              variant="outline"
-                            >
-                              <ToggleGroupItem value="s">S</ToggleGroupItem>
-                              <ToggleGroupItem value="m">M</ToggleGroupItem>
-                              <ToggleGroupItem value="l">L</ToggleGroupItem>
-                            </ToggleGroup>
-                          </TableCell>
-                        </TableRow>
-                      </TableBody>
-                    </Table>
-                  </CardContent>
-                  <CardFooter className="justify-center border-t p-4">
-                    <Button size="sm" variant="ghost" className="gap-1">
-                      <PlusCircle className="h-3.5 w-3.5" />
-                      Add Variant
-                    </Button>
-                  </CardFooter>
-                </Card> */}
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Product Category</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="grid gap-3">
-                      <Label htmlFor="category">Category</Label>
-                      <Select
-                        value={edit.categoryId}
-                        onValueChange={(value) =>
-                          setEdit((prevEdit) => ({
-                            ...prevEdit,
-                            categoryId: value,
-                          }))
-                        }
-                      >
-                        <SelectTrigger className="stocks" id="category">
-                          <SelectValue placeholder="Select category" />
-                        </SelectTrigger>
-                        <SelectContent className="stocks">
-                          {categories.map((category) => (
-                            <SelectItem key={category._id} value={category._id}>
-                              {category.name}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  </CardContent>
-                </Card>
               </div>
               <div className="grid auto-rows-max items-start gap-4 lg:gap-8">
-                {/* <Card x-chunk="dashboard-07-chunk-3">
-                  <CardHeader>
-                    <CardTitle>Product Status</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="grid gap-6">
-                      <div className="grid gap-3">
-                        <Label htmlFor="status">Status</Label>
-                        <Select>
-                          <SelectTrigger
-                            className="stocks"
-                            id="status"
-                            aria-label="Select status"
-                          >
-                            <SelectValue placeholder="Select status" />
-                          </SelectTrigger>
-                          <SelectContent className="stocks">
-                            <SelectItem value="draft">Draft</SelectItem>
-                            <SelectItem value="published">Active</SelectItem>
-                            <SelectItem value="archived">Archived</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card> */}
                 <Card
                   className="overflow-hidden"
                   x-chunk="dashboard-07-chunk-4"
                 >
                   <CardHeader>
                     <CardTitle>Product Image</CardTitle>
-                    <CardDescription>
+                    {/* <CardDescription>
                       Lipsum dolor sit amet, consectetur adipiscing elit
-                    </CardDescription>
+                    </CardDescription> */}
                   </CardHeader>
                   <CardContent>
                     <div className="grid gap-2 relative">
@@ -739,18 +517,34 @@ export function Dashboard() {
                     </div>
                   </CardContent>
                 </Card>
-                <Card x-chunk="dashboard-07-chunk-5">
+                <Card>
                   <CardHeader>
-                    <CardTitle>Archive Product</CardTitle>
-                    <CardDescription>
-                      Lipsum dolor sit amet, consectetur adipiscing elit.
-                    </CardDescription>
+                    <CardTitle>Product Category</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <div></div>
-                    <Button size="sm" variant="secondary">
-                      Archive Product
-                    </Button>
+                    <div className="grid gap-3">
+                      <Label htmlFor="category">Category</Label>
+                      <Select
+                        value={edit.categoryId}
+                        onValueChange={(value) =>
+                          setEdit((prevEdit) => ({
+                            ...prevEdit,
+                            categoryId: value,
+                          }))
+                        }
+                      >
+                        <SelectTrigger className="stocks" id="category">
+                          <SelectValue placeholder="Select category" />
+                        </SelectTrigger>
+                        <SelectContent className="stocks">
+                          {categories.map((category) => (
+                            <SelectItem key={category._id} value={category._id}>
+                              {category.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
                   </CardContent>
                 </Card>
               </div>

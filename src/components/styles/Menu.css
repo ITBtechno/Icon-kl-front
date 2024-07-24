@@ -14,12 +14,12 @@
 }
 
 .modal-content4 {
-  background-color:#373A40;
+  background-color: #373a40;
   width: 470px;
   border-radius: 10px;
   padding: 20px;
   position: relative;
-  color: #373A40;
+  color: #373a40;
   transform: translateY(100%);
   opacity: 0;
   animation: slideUp 0.5s forwards;
@@ -125,15 +125,15 @@
 }
 .filter-section-delete-button {
   padding: 15px 20px;
-  border: 1px solid #686D76;
-  background-color: #686D76;
+  border: 1px solid #686d76;
+  background-color: #686d76;
   border-radius: 15px;
 }
 .filter-section-confirm-button {
   margin-left: 10px;
   padding: 18px 162px;
-  border: 1px solid #686D76;
-  background-color: #686D76;
+  border: 1px solid #686d76;
+  background-color: #686d76;
   border-radius: 12px;
   color: #fff;
 }
@@ -150,10 +150,10 @@
 }
 
 .close-filter {
-  background-color: #686D76;
+  background-color: #686d76;
   padding: 4px 10px;
   z-index: 30;
-  border: 1px solid #686D76;
+  border: 1px solid #686d76;
   border-radius: 100%;
   height: 22px;
   float: right;
@@ -165,17 +165,17 @@
 .rounded-top-filter {
   border: 1px solid;
   border-radius: 10px;
-  color: #686D76;
+  color: #686d76;
   width: 100px;
   height: 8px;
-  background-color:#686D76;
+  background-color: #686d76;
   margin: 0 auto;
   position: sticky;
 }
 .filter-section-delete-button2 {
   padding: 15px 20px;
-  border: 1px solid #686D76;
-  background-color: #686D76;
+  border: 1px solid #686d76;
+  background-color: #686d76;
   border-radius: 15px;
   margin-left: 15px;
 }
@@ -183,13 +183,13 @@
   margin-top: 0;
   z-index: 1000000;
   position: relative;
-  background-color:#373A40;
+  background-color: #373a40;
 }
 .vaul-scrollable-filter {
-  background-color:#373A40;
+  background-color: #373a40;
 }
 .choice-filter {
-  background-color:#373A40;
+  background-color: #373a40;
   color: #fff;
   margin-top: 50px;
 }
@@ -216,6 +216,7 @@ body {
   padding: 0 55px 0 55px;
   display: inline-block;
   animation: menuAnimation 1s forwards;
+  text-decoration: none;
 }
 
 @keyframes menuAnimation {
@@ -394,7 +395,7 @@ hr {
   text-align: center;
   color: #f9f0e1;
   max-width: 160px;
-  height:60px;
+  height: 60px;
 }
 
 .foodImg {
@@ -646,7 +647,6 @@ hr {
   height: 50rem;
 }
 
-
 .search-list {
   display: none;
   width: 270px;
@@ -723,7 +723,6 @@ hr {
     width: 100%;
   }
 
-
   .productsList {
     gap: 4px;
     display: flex;
@@ -736,7 +735,7 @@ hr {
     height: 220px;
   }
 
-  .foodImg{
+  .foodImg {
     width: 120px;
     height: 120px;
     margin-left: -20px;
@@ -770,8 +769,8 @@ hr {
     position: absolute;
     z-index: 1001;
   }
-  .header-left-side{
-padding-right: 30px;
+  .header-left-side {
+    padding-right: 30px;
   }
   .header-left-side,
   .header-right-side {
@@ -824,11 +823,11 @@ padding-right: 30px;
   .header-left-side {
     margin-right: 220px;
   }
-  .header-right-side{
-   margin-right: -10px;
+  .header-right-side {
+    margin-right: -10px;
   }
 
-  .hr{
+  .hr {
     width: 270px !important;
   }
 }
@@ -888,7 +887,7 @@ padding-right: 30px;
     display: flex;
     height: 70px;
     width: 50px;
-   margin-left: -60px;
+    margin-left: -60px;
   }
 
   .basket2 {
@@ -926,40 +925,39 @@ padding-right: 30px;
     max-width: 430px;
     width: 100%;
   }
-  .modal_infoPrdct  {
+  .modal_infoPrdct {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     width: 340px;
-    
-    }
-    .modal-content-product {
-      width: 340px;
-      position: fixed;
-      top: 0;
-      animation: modalAnimationResponsive 1s forwards;
-    }
-    .counter {
-      width: 300px;
-      margin-top: 10px;
-    }
-    .product-details-close {
-      width: 320px;
-    }
-    .productImg {
-      width: 250px;
-      height: 250px;
-    }
-    .modal-content4 {
-      width: 300px;
-      position: fixed;
-      top: 0;
-    }
-    .filter-section-confirm-button {
-     margin-left: 80px;
-      padding: 18px 46px;
-      border-radius: 12px;
-      color: hsl(0, 0%, 100%);
-    }
+  }
+  .modal-content-product {
+    width: 340px;
+    position: fixed;
+    top: 0;
+    animation: modalAnimationResponsive 1s forwards;
+  }
+  .counter {
+    width: 300px;
+    margin-top: 10px;
+  }
+  .product-details-close {
+    width: 320px;
+  }
+  .productImg {
+    width: 250px;
+    height: 250px;
+  }
+  .modal-content4 {
+    width: 300px;
+    position: fixed;
+    top: 0;
+  }
+  .filter-section-confirm-button {
+    margin-left: 80px;
+    padding: 18px 46px;
+    border-radius: 12px;
+    color: hsl(0, 0%, 100%);
+  }
 }

@@ -119,6 +119,7 @@
 
   .stocks {
     background-color: black !important;
+    z-index: 103 !important;
   }
 
   #discardBtn {

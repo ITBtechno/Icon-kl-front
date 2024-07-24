@@ -126,6 +126,7 @@ export function Dashboard() {
 
   const makeUserAdmin = async (email) => {
     try {
+      console.log(`Making user with email ${email} an admin`);
       const response = await fetch(
         `https://icon-karaoke-and-lounge-back.onrender.com/api/users/${email}`,
         {
@@ -133,6 +134,7 @@ export function Dashboard() {
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
+
           },
           body: JSON.stringify({
             role: "Admin",
@@ -140,6 +142,8 @@ export function Dashboard() {
         }
       );
       if (response.ok) {
+        const updatedUser = await response.json();
+        console.log(`Updated user: ${JSON.stringify(updatedUser)}`);
         setCustomers((prevCustomers) =>
           prevCustomers.map((user) => {
             if (user.email === email) {
@@ -148,6 +152,7 @@ export function Dashboard() {
             return user;
           })
         );
+        console.log(`User with email ${email} is now an admin`);
       } else {
         setError(`HTTP error: ${response.status}`);
         console.error("HTTP error:", response.status);
@@ -160,6 +165,7 @@ export function Dashboard() {
 
   const makeAdminUser = async (email) => {
     try {
+      console.log(`Making admin with email ${email} a user`);
       const response = await fetch(
         `https://icon-karaoke-and-lounge-back.onrender.com/api/users/${email}`,
         {
@@ -174,6 +180,8 @@ export function Dashboard() {
         }
       );
       if (response.ok) {
+        const updatedUser = await response.json();
+        console.log(`Updated user: ${JSON.stringify(updatedUser)}`);
         setCustomers((prevCustomers) =>
           prevCustomers.map((user) => {
             if (user.email === email) {
@@ -182,6 +190,7 @@ export function Dashboard() {
             return user;
           })
         );
+        console.log(`Admin with email ${email} is now a user`);
       } else {
         setError(`HTTP error: ${response.status}`);
         console.error("HTTP error:", response.status);
@@ -217,7 +226,7 @@ export function Dashboard() {
             </Tooltip>
           </TooltipProvider>
           <TooltipProvider>
-            <Tooltip>
+            {/* <Tooltip>
               <TooltipTrigger asChild>
                 <Link
                   href="#"
@@ -228,7 +237,7 @@ export function Dashboard() {
                 </Link>
               </TooltipTrigger>
               <TooltipContent side="right">Dashboard</TooltipContent>
-            </Tooltip>
+            </Tooltip> */}
             <Tooltip>
               <TooltipTrigger asChild>
                 <Link
@@ -267,7 +276,7 @@ export function Dashboard() {
               </TooltipTrigger>
               <TooltipContent side="right">Customers</TooltipContent>
             </Tooltip>
-            <Tooltip>
+            {/* <Tooltip>
               <TooltipTrigger asChild>
                 <Link
                   href="#"
@@ -278,7 +287,7 @@ export function Dashboard() {
                 </Link>
               </TooltipTrigger>
               <TooltipContent side="right">Analytics</TooltipContent>
-            </Tooltip>
+            </Tooltip> */}
           </TooltipProvider>
         </nav>
         <nav className="mt-auto flex flex-col items-center gap-4 px-2 sm:py-5">
@@ -425,27 +434,18 @@ export function Dashboard() {
                     Export
                   </span>
                 </Button>
-                {/* <Button size="sm" className="h-8 gap-1" id="add">
-                  <PlusCircle className="h-3.5 w-3.5" />
-                  <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-                    Add Product
-                  </span>
-                </Button> */}
               </div>
             </div>
             <TabsContent value="all">
               <Card x-chunk="dashboard-06-chunk-0">
                 <CardHeader>
                   <CardTitle>Customers</CardTitle>
-                  {/* <CardDescription>Manage customers.</CardDescription> */}
+                  <CardDescription>Manage customers.</CardDescription>
                 </CardHeader>
                 <CardContent>
                   <Table>
                     <TableHeader>
                       <TableRow>
-                        {/* <TableHead className="hidden w-[100px] sm:table-cell">
-                          <span className="sr-only">Image</span>
-                        </TableHead> */}
                         <TableHead>Name</TableHead>
                         <TableHead>Email</TableHead>
                         <TableHead className="hidden md:table-cell">
@@ -473,9 +473,6 @@ export function Dashboard() {
                             <TableCell className="hidden md:table-cell">
                               {customer.role}
                             </TableCell>
-                            {/* <TableCell className="hidden md:table-cell">
-                              {product.ingredients}
-                            </TableCell> */}
                             <TableCell>
                               <DropdownMenu>
                                 <DropdownMenuTrigger asChild>
@@ -537,12 +534,6 @@ export function Dashboard() {
                     </TableBody>
                   </Table>
                 </CardContent>
-                {/* <CardFooter>
-                  <div className="text-xs text-muted-foreground">
-                    Showing <strong>1-10</strong> of <strong>32</strong>{" "}
-                    products
-                  </div>
-                </CardFooter> */}
               </Card>
             </TabsContent>
           </Tabs>

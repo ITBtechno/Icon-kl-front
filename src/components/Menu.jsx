@@ -39,8 +39,6 @@ export default function Menu() {
   const [items, setItems] = useState([]);
   const [activeProduct, setActiveProduct] = useState(null);
 
-
-
   const handleAddToCartFromSearchList = (product) => {
     dispatch(addToOrder({ ...product, count: 1 }));
     setCountNumber(1);
@@ -182,8 +180,7 @@ export default function Menu() {
   ];
   function getStyles(name, personName) {
     return {
-      fontWeight:
-        personName.indexOf(name) === -1
+      fontWeight: personName.indexOf(name) === -1,
     };
   }
 
@@ -444,7 +441,11 @@ export default function Menu() {
               </div>
             </div>
             <button onClick={open4Modal}>
-              <img className="filter-icon" src="./assets/align-right.png" alt="filter" />
+              <img
+                className="filter-icon"
+                src="./assets/align-right.png"
+                alt="filter"
+              />
             </button>
           </div>
           <motion.hr
@@ -482,9 +483,12 @@ export default function Menu() {
           </svg>
         </Link>
         <div id="searchFilter">
-
           <button onClick={open4Modal}>
-            <img className="filter-icon" src="./assets/align-right.png"alt="filter" />
+            <img
+              className="filter-icon"
+              src="./assets/align-right.png"
+              alt="filter"
+            />
           </button>
         </div>
       </div>
@@ -599,8 +603,7 @@ export default function Menu() {
       <div>
         <Link to="/basket">
           <div className="basket2">
-            <img src="./assets/shopping-cart.png" alt="cart"
-            />
+            <img src="./assets/shopping-cart.png" alt="cart" />
           </div>
         </Link>
       </div>
