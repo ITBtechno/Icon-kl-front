@@ -61,17 +61,23 @@ import {
 } from "@/components/ui/tooltip";
 import { TooltipProvider } from "@radix-ui/react-tooltip";
 import "./../styles/admin.css";
+import { useSelector } from "react-redux";
 
 export function Dashboard() {
   const [customers, setCustomers] = useState([]);
   const [error, setError] = useState(null);
-
+  const { token } = useSelector((state) => state.auth);
+  
   const handleGetCustomers = async () => {
     try {
       const response = await fetch(
         "https://icon-karaoke-and-lounge-back.onrender.com/api/users/",
         {
           method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
         }
       );
 
@@ -97,6 +103,10 @@ export function Dashboard() {
         `https://icon-karaoke-and-lounge-back.onrender.com/api/users/${email}`,
         {
           method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
         }
       );
 
