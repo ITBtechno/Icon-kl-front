@@ -107,7 +107,7 @@ export function Dashboard() {
       );
 
       if (response.ok) {
-        setProducts(customers.filter((product) => product._id !== id));
+        setProducts(products.filter((product) => product._id !== id));
         console.log("Product deleted successfully");
       } else {
         setError(`HTTP error: ${response.status}`);
@@ -391,7 +391,10 @@ export function Dashboard() {
                               {product.price}
                             </TableCell>
                             <TableCell className="hidden md:table-cell">
-                              {product.ingredients}
+                              {product.ingredients &&
+                              product.ingredients.length > 0
+                                ? product.ingredients.join(", ")
+                                : null}
                             </TableCell>
                             <TableCell>
                               <DropdownMenu>

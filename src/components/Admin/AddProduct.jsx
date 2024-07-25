@@ -42,6 +42,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
+import { Select as AntdSelect } from "antd";
 import { Label } from "@/components/ui/label";
 import {
   Select,
@@ -65,7 +66,7 @@ import { useSelector } from "react-redux";
 export function Dashboard() {
   const [formData, setFormData] = useState({
     name: "",
-    ingredients: "",
+    ingredients: [],
     price: "",
     categoryId: "",
     image: null,
@@ -107,20 +108,23 @@ export function Dashboard() {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
+  const handleIngredientChange = (value) => {
+    setFormData((prev) => ({ ...prev, ingredients: value }));
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     const formDataToSend = new FormData();
 
     Object.entries(formData).forEach(([key, value]) => {
-      if (value !== null && value !== "") {
+      if (key === "ingredients") {
+        value.forEach((ingredient) => {
+          formDataToSend.append("ingredients[]", ingredient);
+        });
+      } else if (value !== null && value !== "") {
         formDataToSend.append(key, value);
       }
     });
-
-    if (formData.image) {
-      formDataToSend.append("image", formData.image);
-    }
 
     try {
       const response = await fetch(
@@ -136,6 +140,14 @@ export function Dashboard() {
 
       if (response.ok) {
         console.log("Product added successfully!");
+        setFormData({
+          name: "",
+          ingredients: [],
+          price: "",
+          categoryId: "",
+          image: null,
+        });
+        setSelectedImage(null);
       } else {
         const errorData = await response.json();
         console.error("Failed to add product:", errorData);
@@ -382,30 +394,25 @@ export function Dashboard() {
                         />
                       </div>
                       <div className="grid gap-3">
-                        <Label htmlFor="description">Ingredients</Label>
-                        <Textarea
-                          id="ingredients"
-                          name="ingredients"
+                        <Label htmlFor="ingredients">Ingredients</Label>
+                        <AntdSelect
+                          mode="tags"
+                          style={{ width: "100%" }}
+                          placeholder="Enter ingredients"
+                          onChange={handleIngredientChange}
                           value={formData.ingredients}
-                          onChange={handleChange}
-                          required
                         />
                       </div>
                       <div className="grid gap-3">
-                        <Label htmlFor="description">Price</Label>
-                        <div>
-                          <Label htmlFor="price-1" className="sr-only">
-                            Price
-                          </Label>
-                          <Input
-                            type="number"
-                            id="price"
-                            name="price"
-                            value={formData.price}
-                            onChange={handleChange}
-                            required
-                          />
-                        </div>
+                        <Label htmlFor="price">Price</Label>
+                        <Input
+                          type="number"
+                          id="price"
+                          name="price"
+                          value={formData.price}
+                          onChange={handleChange}
+                          required
+                        />
                       </div>
                     </div>
                   </CardContent>
@@ -478,22 +485,17 @@ export function Dashboard() {
                     <div className="grid gap-6 sm:grid-cols-3">
                       <div className="grid gap-3">
                         <Label htmlFor="category">Category</Label>
-                        <Select>
-                          <SelectTrigger
-                            className="stocks"
-                            id="category"
-                            name="category"
-                            value={formData.categoryId}
-                            onValueChange={(value) =>
-                              setFormData((prevFormData) => ({
-                                ...prevFormData,
-                                categoryId: value,
-                              }))
-                            }
-                            required
-                          >
+                        <Select
+                          value={formData.categoryId}
+                          onValueChange={(value) =>
+                            setFormData((prevFormData) => ({
+                              ...prevFormData,
+                              categoryId: value,
+                            }))
+                          }
+                        >
+                          <SelectTrigger className="stocks">
                             <SelectValue placeholder="Select category" />
-                            <SelectValue defaultValue="Select category" />
                           </SelectTrigger>
                           <SelectContent className="stocks">
                             {categoryOptions.map((category) => (
