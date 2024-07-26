@@ -73,7 +73,7 @@ export function Dashboard() {
   const handleGetCategories = async () => {
     try {
       const response = await fetch(
-        "https://icon-karaoke-and-lounge-back.onrender.com/api/categories-with-items",
+        "https://icon-kl-back.onrender.com/api/categories-with-items",
         {
           method: "GET",
           headers: {
