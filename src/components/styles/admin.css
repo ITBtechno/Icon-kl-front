@@ -191,4 +191,13 @@
   #edit:hover {
     color: black !important;
   }
+
+  .ant-select {
+    background-color: black !important;
+  }
+
+  .ant-select-selector {
+    background-color: black !important;
+    color: white !important;
+  }
 }

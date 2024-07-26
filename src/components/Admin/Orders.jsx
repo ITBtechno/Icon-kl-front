@@ -75,7 +75,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { loginSuccess } from "../../redux/actions/authActions";
 import Cookies from "js-cookie";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
+import { faArrowLeft, faLayerGroup } from "@fortawesome/free-solid-svg-icons";
 
 export function Dashboard() {
   const [orders, setOrders] = useState([]);
@@ -165,6 +165,19 @@ export function Dashboard() {
                 </Link>
               </TooltipTrigger>
               <TooltipContent side="right">Products</TooltipContent>
+            </Tooltip>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Link
+                  to="/admin/categories"
+                  href="#"
+                  className="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-foreground md:h-8 md:w-8"
+                >
+                  <FontAwesomeIcon className="h-5 w-5" icon={faLayerGroup} />
+                  <span className="sr-only">Categories</span>
+                </Link>
+              </TooltipTrigger>
+              <TooltipContent side="right">Categories</TooltipContent>
             </Tooltip>
             <Tooltip>
               <TooltipTrigger asChild>

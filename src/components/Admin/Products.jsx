@@ -62,7 +62,7 @@ import {
 import { TooltipProvider } from "@radix-ui/react-tooltip";
 import "./../styles/admin.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
+import { faArrowLeft, faLayerGroup } from "@fortawesome/free-solid-svg-icons";
 import { useSelector } from "react-redux";
 
 export function Dashboard() {
@@ -76,6 +76,10 @@ export function Dashboard() {
         "https://icon-kl-back.onrender.com/api/items-with-category",
         {
           method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
         }
       );
 
@@ -168,6 +172,19 @@ export function Dashboard() {
                 </Link>
               </TooltipTrigger>
               <TooltipContent side="right">Products</TooltipContent>
+            </Tooltip>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Link
+                  to="/admin/categories"
+                  href="#"
+                  className="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-foreground md:h-8 md:w-8"
+                >
+                  <FontAwesomeIcon className="h-5 w-5" icon={faLayerGroup} />
+                  <span className="sr-only">Categories</span>
+                </Link>
+              </TooltipTrigger>
+              <TooltipContent side="right">Categories</TooltipContent>
             </Tooltip>
             <Tooltip>
               <TooltipTrigger asChild>

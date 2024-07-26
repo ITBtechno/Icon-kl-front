@@ -15,12 +15,10 @@ import Customers from "./components/Admin/Customers.jsx";
 import PrivateRoute from "./routes/PrivateRouter.jsx";
 import AddProduct from "./components/Admin/AddProduct.jsx";
 import NotFound from "./components/NotFound.jsx";
+import { Category } from "@mui/icons-material";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <Provider store={store}>
-
-
-
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<App />} />
@@ -30,12 +28,12 @@ ReactDOM.createRoot(document.getElementById("root")).render(
           <Route path="/admin/orders" element={<Orders />} />
           <Route path="/admin/customers" element={<Customers />} />
           <Route path="/admin/products" element={<Products />} />
+          <Route path="/admin/categories" element={<Category />} />
           <Route path="/admin/:productId/edit" element={<EditProduct />} />
           <Route path="/admin/addProduct" element={<AddProduct />} />
         </Route>
         <Route path="*" element={<NotFound />} />
       </Routes>
     </BrowserRouter>
-
   </Provider>
 );

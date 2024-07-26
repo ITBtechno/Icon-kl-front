@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link } from "react-router-dom";
 import {
-  ChevronLeft,
+  File,
   Home,
   LineChart,
+  ListFilter,
+  MoreHorizontal,
   Package,
   Package2,
   PanelLeft,
@@ -11,7 +13,6 @@ import {
   Search,
   Settings,
   ShoppingCart,
-  Upload,
   Users2,
 } from "lucide-react";
 
@@ -35,6 +36,7 @@ import {
 } from "@/components/ui/card";
 import {
   DropdownMenu,
+  DropdownMenuCheckboxItem,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
@@ -42,14 +44,6 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import {
   Table,
@@ -59,35 +53,27 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Textarea } from "@/components/ui/textarea";
-import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { TooltipProvider } from "@radix-ui/react-tooltip";
+import "./../styles/admin.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft, faLayerGroup } from "@fortawesome/free-solid-svg-icons";
 import { useSelector } from "react-redux";
 
 export function Dashboard() {
-  const [edit, setEdit] = useState({
-    name: "",
-    ingredients: "",
-    price: "",
-    categoryId: "",
-    image: "",
-  });
-  const [error, setError] = useState(null);
   const [categories, setCategories] = useState([]);
+  const [error, setError] = useState(null);
   const { token } = useSelector((state) => state.auth);
-  let { productId } = useParams();
 
-  const handleGetEdit = async () => {
+  const handleGetCategories = async () => {
     try {
       const response = await fetch(
-        `https://icon-kl-back.onrender.com/api/items/${productId}`,
+        "https://icon-karaoke-and-lounge-back.onrender.com/api/categories-with-items",
         {
           method: "GET",
           headers: {
@@ -99,7 +85,7 @@ export function Dashboard() {
 
       if (response.ok) {
         const data = await response.json();
-        setEdit(data);
+        setCategories(data);
         console.log(data);
       } else {
         setError(`HTTP error: ${response.status}`);
@@ -111,70 +97,35 @@ export function Dashboard() {
     }
   };
 
-  const handleFetchCategories = async () => {
-    try {
-      const response = await fetch(
-        `https://icon-kl-back.onrender.com/api/categories`
-      );
+  //   const handleDeleteProduct = async (id) => {
+  //     try {
+  //       const response = await fetch(
+  //         `https://icon-kl-back.onrender.com/api/items/${id}`,
+  //         {
+  //           method: "DELETE",
+  //           headers: {
+  //             "Content-Type": "application/json",
+  //             Authorization: `Bearer ${token}`,
+  //           },
+  //         }
+  //       );
 
-      if (response.ok) {
-        const data = await response.json();
-        setCategories(data);
-      } else {
-        setError(`HTTP error: ${response.status}`);
-      }
-    } catch (error) {
-      setError(error.message);
-    }
-  };
-
-  const handleUpdateProduct = async () => {
-    try {
-      const response = await fetch(
-        `https://icon-kl-back.onrender.com/api/items/${productId}`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify(edit),
-        }
-      );
-
-      if (response.ok) {
-        console.log("Product updated successfully!");
-      } else {
-        setError(`HTTP error: ${response.status}`);
-        console.error("HTTP error:", response.status);
-      }
-    } catch (error) {
-      setError(error.message);
-      console.error("Error:", error);
-    }
-  };
+  //       if (response.ok) {
+  //         setProducts(products.filter((product) => product._id !== id));
+  //         console.log("Product deleted successfully");
+  //       } else {
+  //         setError(`HTTP error: ${response.status}`);
+  //         console.error("Error deleting product:", error);
+  //       }
+  //     } catch (error) {
+  //       setError(error.message);
+  //       console.error("Error deleting product:", error);
+  //     }
+  //   };
 
   useEffect(() => {
-    handleGetEdit();
-    handleFetchCategories();
-  }, [productId]);
-
-  const handleFileChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      setEdit((prevEdit) => ({
-        ...prevEdit,
-        image: URL.createObjectURL(file),
-      }));
-    }
-  };
-
-  const handleDeleteImage = () => {
-    setEdit((prevEdit) => ({
-      ...prevEdit,
-      image: "",
-    }));
-  };
+    handleGetCategories();
+  }, []);
 
   return (
     <div className="flex min-h-screen w-full flex-col bg-muted/40">
@@ -226,7 +177,6 @@ export function Dashboard() {
             <Tooltip>
               <TooltipTrigger asChild>
                 <Link
-                  to="/admin/categories"
                   href="#"
                   className="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-foreground md:h-8 md:w-8"
                 >
@@ -334,12 +284,12 @@ export function Dashboard() {
               <BreadcrumbSeparator />
               <BreadcrumbItem>
                 <BreadcrumbLink asChild>
-                  <Link href="#">Products</Link>
+                  <Link href="#">Categories</Link>
                 </BreadcrumbLink>
               </BreadcrumbItem>
               <BreadcrumbSeparator />
               <BreadcrumbItem>
-                <BreadcrumbPage id="page">Edit Product</BreadcrumbPage>
+                <BreadcrumbPage id="page">All Categories</BreadcrumbPage>
               </BreadcrumbItem>
             </BreadcrumbList>
           </Breadcrumb>
@@ -378,196 +328,145 @@ export function Dashboard() {
           </DropdownMenu>
         </header>
         <main className="grid flex-1 items-start gap-4 p-4 sm:px-6 sm:py-0 md:gap-8">
-          <div className="mx-auto grid max-w-[59rem] flex-1 auto-rows-max gap-4">
-            <div className="flex items-center gap-4">
-              <Button
-                variant="outline"
-                size="icon"
-                className="h-7 w-7"
-                id="back"
-              >
-                <Link to="/admin/products">
-                  <ChevronLeft className="h-4 w-4" />
-                  <span className="sr-only">Back</span>
-                </Link>
-              </Button>
-              <h1 className="flex-1 shrink-0 whitespace-nowrap text-xl font-semibold tracking-tight sm:grow-0">
-                Pro Controller
-              </h1>
-              {/* <Badge variant="outline" className="ml-auto sm:ml-0">
-                In stock
-              </Badge> */}
-              <div className="hidden items-center gap-2 md:ml-auto md:flex">
-                <Button variant="outline" size="sm" id="discardBtn">
-                  Discard
+          <Tabs defaultValue="all">
+            <div className="flex items-center">
+              {/* <TabsList>
+                <TabsTrigger value="all">All</TabsTrigger>
+                <TabsTrigger value="active">Active</TabsTrigger>
+                <TabsTrigger value="draft">Draft</TabsTrigger>
+                <TabsTrigger value="archived" className="hidden sm:flex">
+                  Archived
+                </TabsTrigger>
+              </TabsList> */}
+              <div className="ml-auto flex items-center gap-2">
+                <Button size="sm" variant="outline" className="h-8 gap-1">
+                  <File className="h-3.5 w-3.5" />
+                  <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
+                    Export
+                  </span>
                 </Button>
-                <Button size="sm" onClick={handleUpdateProduct}>
-                  Save Product
-                </Button>
+                {/* <Link to="/admin/addProduct">
+                  <Button size="sm" className="h-8 gap-1" id="add">
+                    <PlusCircle className="h-3.5 w-3.5" />
+                    <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
+                      Add Product
+                    </span>
+                  </Button>
+                </Link> */}
               </div>
             </div>
-            <div className="grid gap-4 md:grid-cols-[1fr_250px] lg:grid-cols-3 lg:gap-8">
-              <div className="grid auto-rows-max items-start gap-4 lg:col-span-2 lg:gap-8">
-                <Card x-chunk="dashboard-07-chunk-0">
-                  <CardHeader>
-                    <CardTitle>Product Details</CardTitle>
-                    <CardDescription>
-                      Lipsum dolor sit amet, consectetur adipiscing elit
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="grid gap-6">
-                      <div className="grid gap-3">
-                        <Label htmlFor="name">Name</Label>
-                        <Input
-                          id="name"
-                          type="text"
-                          className="w-full"
-                          value={edit.name}
-                          onChange={(e) =>
-                            setEdit((prevEdit) => ({
-                              ...prevEdit,
-                              name: e.target.value,
-                            }))
-                          }
-                        />
-                      </div>
-                      <div className="grid gap-3">
-                        <Label htmlFor="description">Ingredients</Label>
-                        <Textarea
-                          id="description"
-                          className="w-full"
-                          value={edit.ingredients}
-                          onChange={(e) =>
-                            setEdit((prevEdit) => ({
-                              ...prevEdit,
-                              ingredients: e.target.value,
-                            }))
-                          }
-                        />
-                      </div>
-                      <div className="grid gap-3">
-                        <Label htmlFor="description">Price</Label>
-                        <div>
-                          <Label htmlFor="price-1" className="sr-only">
-                            Price
-                          </Label>
-                          <Input
-                            className="stocks"
-                            id="description"
-                            type="number"
-                            defaultValue="0"
-                            value={edit.price}
-                            onChange={(e) =>
-                              setEdit((prevEdit) => ({
-                                ...prevEdit,
-                                price: e.target.value,
-                              }))
-                            }
-                          />
-                        </div>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              </div>
-              <div className="grid auto-rows-max items-start gap-4 lg:gap-8">
-                <Card
-                  className="overflow-hidden"
-                  x-chunk="dashboard-07-chunk-4"
-                >
-                  <CardHeader>
-                    <CardTitle>Product Image</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="grid gap-2 relative">
-                      {edit.image && (
-                        <div className="aspect-square w-full rounded-md overflow-hidden">
-                          <img
-                            alt="Product image"
-                            className="w-full h-full object-cover"
-                            src={edit.image}
-                          />
-                          <button
-                            type="button"
-                            onClick={handleDeleteImage}
-                            className="absolute bottom-0 right-0 m-2 p-1 bg-red-500 text-white rounded-md hover:bg-red-600 focus:outline-none"
-                          >
-                            Delete
-                          </button>
-                        </div>
-                      )}
-                      {!edit.image && (
-                        <form className="upload">
-                          <label
-                            htmlFor="files"
-                            className="grid grid-cols-3 gap-2"
-                          >
-                            <button
-                              type="button"
-                              onClick={() =>
-                                document.getElementById("files").click()
-                              }
-                              className="flex aspect-square w-11 items-center justify-center rounded-md border border-dashed"
-                            >
-                              <Upload className="h-4 w-4 text-muted-foreground" />
-                              <span className="sr-only">Upload</span>
-                            </button>
-                            <input
-                              type="file"
-                              id="files"
-                              className="hidden"
-                              multiple
-                              required
-                              onChange={handleFileChange}
-                            />
-                          </label>
-                        </form>
-                      )}
-                    </div>
-                  </CardContent>
-                </Card>
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Product Category</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="grid gap-3">
-                      <Label htmlFor="category">Category</Label>
-                      <Select
-                        value={edit.categoryId}
-                        onValueChange={(value) =>
-                          setEdit((prevEdit) => ({
-                            ...prevEdit,
-                            categoryId: value,
-                          }))
-                        }
-                      >
-                        <SelectTrigger className="stocks" id="category">
-                          <SelectValue placeholder="Select category" />
-                        </SelectTrigger>
-                        <SelectContent className="stocks">
-                          {categories.map((category) => (
-                            <SelectItem key={category._id} value={category._id}>
+            <TabsContent value="all">
+              <Card x-chunk="dashboard-06-chunk-0">
+                <CardHeader>
+                  <CardTitle>Categories</CardTitle>
+                  <CardDescription>Manage your categories.</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead className="hidden w-[100px] sm:table-cell">
+                          <span className="sr-only">Image</span>
+                        </TableHead>
+                        <TableHead>Items</TableHead>
+                        <TableHead>Category</TableHead>
+                        <TableHead className="hidden md:table-cell">
+                          Price
+                        </TableHead>
+                        <TableHead className="hidden md:table-cell">
+                          Ingredients
+                        </TableHead>
+                        <TableHead>
+                          <span className="sr-only">Actions</span>
+                        </TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {categories.length > 0 ? (
+                        categories.map((category) => (
+                          <TableRow key={category._id}>
+                            <TableCell className="font-medium">
                               {category.name}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  </CardContent>
-                </Card>
-              </div>
-            </div>
-            <div className="flex items-center justify-center gap-2 md:hidden">
-              <Button variant="outline" size="sm">
-                Discard
-              </Button>
-              <Button size="sm" onClick={handleUpdateProduct}>
-                Save Product
-              </Button>
-            </div>
-          </div>
+                            </TableCell>
+                            {/* <TableCell className="hidden sm:table-cell">
+                              <img
+                                alt="Product image"
+                                className="aspect-square rounded-md object-cover"
+                                height="64"
+                                src={product.image}
+                                width="64"
+                              />
+                            </TableCell>
+                            <TableCell className="font-medium">
+                              {product.name}
+                            </TableCell>
+                            <TableCell>
+                              <Badge variant="outline" id="status">
+                                {product.categoryId?.name}
+                              </Badge>
+                            </TableCell>
+                            <TableCell className="hidden md:table-cell">
+                              {product.price}
+                            </TableCell>
+                            <TableCell className="hidden md:table-cell">
+                              {product.ingredients &&
+                              product.ingredients.length > 0
+                                ? product.ingredients.join(", ")
+                                : null}
+                            </TableCell> */}
+                            <TableCell>
+                              <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                  <Button
+                                    aria-haspopup="true"
+                                    size="icon"
+                                    variant="ghost"
+                                  >
+                                    <MoreHorizontal className="h-4 w-4" />
+                                    <span className="sr-only">Toggle menu</span>
+                                  </Button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent align="end" id="actions">
+                                  <DropdownMenuLabel id="actionsText">
+                                    Actions
+                                  </DropdownMenuLabel>
+                                  {/* <Link
+                                    to={`/admin/${product._id}/edit`}
+                                    id="edit"
+                                  >
+                                    <DropdownMenuItem>Edit</DropdownMenuItem>
+                                  </Link> */}
+                                  <DropdownMenuItem
+                                  // onClick={() =>
+                                  //   handleDeleteProduct(product._id)
+                                  // }
+                                  >
+                                    Delete
+                                  </DropdownMenuItem>
+                                </DropdownMenuContent>
+                              </DropdownMenu>
+                            </TableCell>
+                          </TableRow>
+                        ))
+                      ) : (
+                        <TableRow>
+                          <TableCell colSpan={6}>
+                            <p>No products available</p>
+                          </TableCell>
+                        </TableRow>
+                      )}
+                    </TableBody>
+                  </Table>
+                </CardContent>
+                {/* <CardFooter>
+                  <div className="text-xs text-muted-foreground">
+                    Showing <strong>1-10</strong> of <strong>32</strong>{" "}
+                    products
+                  </div>
+                </CardFooter> */}
+              </Card>
+            </TabsContent>
+          </Tabs>
         </main>
       </div>
     </div>
