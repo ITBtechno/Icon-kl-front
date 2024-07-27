@@ -193,11 +193,15 @@
   }
 
   .ant-select {
-    background-color: black !important;
+    background-color: #1e1e1e!important;
   }
 
   .ant-select-selector {
-    background-color: black !important;
+    background-color: #1e1e1e !important;
+
     color: white !important;
   }
+}
+.ant-select-selector span {
+  background-color: #facc15 !important;
 }

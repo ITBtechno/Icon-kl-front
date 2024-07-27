@@ -355,30 +355,19 @@ export function Dashboard() {
                 </Link> */}
               </div>
             </div>
-            <TabsContent value="all">
+            <TabsContent value="all" className="md:w-[650px]">
               <Card x-chunk="dashboard-06-chunk-0">
                 <CardHeader>
                   <CardTitle>Categories</CardTitle>
                   <CardDescription>Manage your categories.</CardDescription>
                 </CardHeader>
-                <CardContent>
+                <CardContent  className="md:w-[600px]">
                   <Table>
                     <TableHeader>
                       <TableRow>
-                        <TableHead className="hidden w-[100px] sm:table-cell">
-                          <span className="sr-only">Image</span>
-                        </TableHead>
+                        <TableHead>Categories</TableHead>
                         <TableHead>Items</TableHead>
-                        <TableHead>Category</TableHead>
-                        <TableHead className="hidden md:table-cell">
-                          Price
-                        </TableHead>
-                        <TableHead className="hidden md:table-cell">
-                          Ingredients
-                        </TableHead>
-                        <TableHead>
-                          <span className="sr-only">Actions</span>
-                        </TableHead>
+                        <TableHead className="hidden md:table-cell"></TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -388,32 +377,7 @@ export function Dashboard() {
                             <TableCell className="font-medium">
                               {category.name}
                             </TableCell>
-                            {/* <TableCell className="hidden sm:table-cell">
-                              <img
-                                alt="Product image"
-                                className="aspect-square rounded-md object-cover"
-                                height="64"
-                                src={product.image}
-                                width="64"
-                              />
-                            </TableCell>
-                            <TableCell className="font-medium">
-                              {product.name}
-                            </TableCell>
-                            <TableCell>
-                              <Badge variant="outline" id="status">
-                                {product.categoryId?.name}
-                              </Badge>
-                            </TableCell>
-                            <TableCell className="hidden md:table-cell">
-                              {product.price}
-                            </TableCell>
-                            <TableCell className="hidden md:table-cell">
-                              {product.ingredients &&
-                              product.ingredients.length > 0
-                                ? product.ingredients.join(", ")
-                                : null}
-                            </TableCell> */}
+                            <TableCell>{category.items.length}</TableCell>
                             <TableCell>
                               <DropdownMenu>
                                 <DropdownMenuTrigger asChild>
@@ -426,7 +390,7 @@ export function Dashboard() {
                                     <span className="sr-only">Toggle menu</span>
                                   </Button>
                                 </DropdownMenuTrigger>
-                                <DropdownMenuContent align="end" id="actions">
+                                <DropdownMenuContent align="end" id="actions" >
                                   <DropdownMenuLabel id="actionsText">
                                     Actions
                                   </DropdownMenuLabel>

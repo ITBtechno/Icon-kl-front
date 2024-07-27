@@ -26,7 +26,7 @@ export default function MainPage() {
   const [emailForVerification, setEmailForVerification] = useState("");
   const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [accessToken, setAccessToken] = useState(null);
-
+  const [user, setUser] = useState([]);
   const [isModalUserOpen, setModalUserOpen] = useState(false);
   const [isModalUserLogoutOpen, setModalUserLogoutOpen] = useState(false);
   const [userName, setUserName] = useState("");
@@ -104,6 +104,26 @@ export default function MainPage() {
     setVerifyModalOpen(false);
   };
 
+  useEffect(() => {
+    fetch(`https://icon-kl-back.onrender.com/api/users/${email}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    })
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error(`Error: ${res.statusText}`);
+        }
+        return res.json();
+      })
+      .then((data) => setUser(data))
+      .catch((error) => {
+        console.error("Failed to fetch user:", error);
+      });
+  }, [email, token]);
+
   const handleUserUpdate = (e) => {
     e.preventDefault();
     fetch(`https://icon-kl-back.onrender.com/api/users/${email}`, {
@@ -123,9 +143,9 @@ export default function MainPage() {
   };
 
   useEffect(() => {
-    setUserName(name);
-    setUserGender(gender);
-  }, [name, gender]);
+    setUserName(user.fullname);
+    setUserGender(user.gender);
+  }, [user]);
 
   const handleSubmitEmail = async (e) => {
     e.preventDefault();
@@ -182,6 +202,7 @@ export default function MainPage() {
     await i18n.changeLanguage(lang);
     setModalOpen(false);
   };
+  console.log("namama" + user.fullname);
   return (
     <div className="mainPage">
       <Helmet>
@@ -243,7 +264,7 @@ export default function MainPage() {
               {isLoggedIn ? (
                 <button className="user" onClick={openModalUserLogout}>
                   <FontAwesomeIcon icon={faUser} />
-                  <span>{name}</span>
+                  <span>{user.fullname}</span>
                 </button>
               ) : (
                 <button id="log-in" className="user" onClick={open2Modal}>
@@ -311,7 +332,7 @@ export default function MainPage() {
             {isLoggedIn ? (
               <button className="user" onClick={openModalUserLogout}>
                 <FontAwesomeIcon icon={faUser} />
-                <span>{name}</span>
+                <span>{user.fullname}</span>
               </button>
             ) : (
               <button id="log-in" className="user" onClick={open2Modal}>
