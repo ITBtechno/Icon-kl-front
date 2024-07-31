@@ -70,11 +70,12 @@ import { TooltipProvider } from "@radix-ui/react-tooltip";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft, faLayerGroup } from "@fortawesome/free-solid-svg-icons";
 import { useSelector } from "react-redux";
+import { Select as AntdSelect } from "antd";
 
 export function Dashboard() {
   const [edit, setEdit] = useState({
     name: "",
-    ingredients: "",
+    ingredients: [],
     price: "",
     categoryId: "",
     image: "",
@@ -159,13 +160,36 @@ export function Dashboard() {
     handleFetchCategories();
   }, [productId]);
 
-  const handleFileChange = (e) => {
+  const handleFileChange = async (e) => {
     const file = e.target.files[0];
     if (file) {
-      setEdit((prevEdit) => ({
-        ...prevEdit,
-        image: URL.createObjectURL(file),
-      }));
+      const formData = new FormData();
+      formData.append("image", file);
+
+      try {
+        const response = await fetch(
+          "https://icon-kl-back.onrender.com/api/upload",
+          {
+            method: "POST",
+            body: formData,
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        if (response.ok) {
+          const result = await response.json();
+          setEdit((prevEdit) => ({
+            ...prevEdit,
+            image: result.imageUrl,
+          }));
+        } else {
+          setError(`HTTP error: ${response.status}`);
+        }
+      } catch (error) {
+        setError(error.message);
+      }
     }
   };
 
@@ -328,13 +352,13 @@ export function Dashboard() {
             <BreadcrumbList id="breadcrumb">
               <BreadcrumbItem>
                 <BreadcrumbLink asChild>
-                  <Link href="#">Dashboard</Link>
+                  <Link to="/">Dashboard</Link>
                 </BreadcrumbLink>
               </BreadcrumbItem>
               <BreadcrumbSeparator />
               <BreadcrumbItem>
                 <BreadcrumbLink asChild>
-                  <Link href="#">Products</Link>
+                  <Link to="/admin/products">Products</Link>
                 </BreadcrumbLink>
               </BreadcrumbItem>
               <BreadcrumbSeparator />
@@ -434,16 +458,17 @@ export function Dashboard() {
                       </div>
                       <div className="grid gap-3">
                         <Label htmlFor="description">Ingredients</Label>
-                        <Textarea
-                          id="description"
-                          className="w-full"
-                          value={edit.ingredients}
-                          onChange={(e) =>
+                        <AntdSelect
+                          mode="tags"
+                          style={{ width: "100%" }}
+                          placeholder="Enter ingredients"
+                          onChange={(value) =>
                             setEdit((prevEdit) => ({
                               ...prevEdit,
-                              ingredients: e.target.value,
+                              ingredients: value,
                             }))
                           }
+                          value={edit.ingredients}
                         />
                       </div>
                       <div className="grid gap-3">
@@ -480,8 +505,8 @@ export function Dashboard() {
                     <CardTitle>Product Image</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <div className="grid gap-2 relative">
-                      {edit.image && (
+                    <div className="relative">
+                      {edit.image ? (
                         <div className="aspect-square w-full rounded-md overflow-hidden">
                           <img
                             alt="Product image"
@@ -496,8 +521,7 @@ export function Dashboard() {
                             Delete
                           </button>
                         </div>
-                      )}
-                      {!edit.image && (
+                      ) : (
                         <form className="upload">
                           <label
                             htmlFor="files"
@@ -517,8 +541,6 @@ export function Dashboard() {
                               type="file"
                               id="files"
                               className="hidden"
-                              multiple
-                              required
                               onChange={handleFileChange}
                             />
                           </label>

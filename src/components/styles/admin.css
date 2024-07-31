@@ -191,17 +191,15 @@
   #edit:hover {
     color: black !important;
   }
+}
+.ant-select {
+  background-color: #000 !important;
+}
 
-  .ant-select {
-    background-color: #1e1e1e!important;
-  }
-
-  .ant-select-selector {
-    background-color: #1e1e1e !important;
-
-    color: white !important;
-  }
+.ant-select-selector {
+  background-color: #000 !important;
+  color: white !important;
 }
 .ant-select-selector span {
-  background-color: #facc15 !important;
+  background-color: #1c1c1c !important;
 }
