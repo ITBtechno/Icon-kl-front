@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import {
   File,
@@ -69,6 +69,8 @@ export function Dashboard() {
   const [customers, setCustomers] = useState([]);
   const [error, setError] = useState(null);
   const { token } = useSelector((state) => state.auth);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filteredCustomers, setFilteredCustomers] = useState([]);
 
   const handleGetCustomers = async () => {
     try {
@@ -86,6 +88,7 @@ export function Dashboard() {
       if (response.ok) {
         const data = await response.json();
         setCustomers(data);
+        setFilteredCustomers(data);
         console.log(data);
       } else {
         setError(`HTTP error: ${response.status}`);
@@ -96,6 +99,20 @@ export function Dashboard() {
       console.error("Error:", error);
     }
   };
+
+  const handleSearch = useCallback(
+    (e) => {
+      const searchTerm = e.target.value;
+      setSearchTerm(searchTerm);
+
+      const lowercasedSearchTerm = searchTerm.toLowerCase();
+      const filtered = customers.filter((customer) =>
+        customer.fullname.toLowerCase().includes(lowercasedSearchTerm)
+      );
+      setFilteredCustomers(filtered);
+    },
+    [customers]
+  );
 
   const handleDeleteCustomer = async (email) => {
     console.log("Deleting user with email:", email);
@@ -400,6 +417,8 @@ export function Dashboard() {
               type="search"
               placeholder="Search..."
               className="w-full rounded-lg bg-background pl-8 md:w-[200px] lg:w-[336px]"
+              value={searchTerm}
+              onChange={handleSearch}
             />
           </div>
           <DropdownMenu>
@@ -472,8 +491,8 @@ export function Dashboard() {
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {customers.length > 0 ? (
-                        customers.map((customer) => (
+                      {filteredCustomers.length > 0 ? (
+                        filteredCustomers.map((customer) => (
                           <TableRow key={customer._id}>
                             <TableCell className="hidden sm:table-cell">
                               {customer.fullname}

@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import React, { useEffect, useRef, useState } from "react";
+import { Link, useParams } from "react-router-dom";
 import {
   File,
   Home,
@@ -44,6 +44,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import {
   Table,
@@ -59,6 +60,13 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { TooltipProvider } from "@radix-ui/react-tooltip";
 import "./../styles/admin.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -69,6 +77,37 @@ export function Dashboard() {
   const [categories, setCategories] = useState([]);
   const [error, setError] = useState(null);
   const { token } = useSelector((state) => state.auth);
+  const [isModalCategory, setModalCategory] = useState(false);
+  const [isModalCategoryAdd, setModalCategoryAdd] = useState(false);
+  let { Id } = useParams();
+  const categoriesRef = useRef(null);
+  const [filteredCategories, setFilteredCategories] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [editC, setEditC] = useState({
+    name: "",
+    _id: "",
+  });
+  const [newCategoryName, setNewCategoryName] = useState("");
+
+  const openModalCategory = (category) => {
+    setSelectedCategory(category);
+    setEditC({ name: category.name, _id: category._id });
+    setModalCategory(true);
+  };
+
+  const closeModalCategory = () => {
+    console.log("Updating category with name:", editC._id);
+    setModalCategory(false);
+  };
+
+  const openModalCategoryAdd = () => {
+    setModalCategoryAdd(true);
+  };
+
+  const closeModalCategoryAdd = () => {
+    setModalCategoryAdd(false);
+  };
 
   const handleGetCategories = async () => {
     try {
@@ -86,6 +125,8 @@ export function Dashboard() {
       if (response.ok) {
         const data = await response.json();
         setCategories(data);
+        setEditC(data);
+        setFilteredCategories(data);
         console.log(data);
       } else {
         setError(`HTTP error: ${response.status}`);
@@ -97,31 +138,99 @@ export function Dashboard() {
     }
   };
 
-  //   const handleDeleteProduct = async (id) => {
-  //     try {
-  //       const response = await fetch(
-  //         `https://icon-kl-back.onrender.com/api/items/${id}`,
-  //         {
-  //           method: "DELETE",
-  //           headers: {
-  //             "Content-Type": "application/json",
-  //             Authorization: `Bearer ${token}`,
-  //           },
-  //         }
-  //       );
+  const handleAddCategory = async () => {
+    try {
+      const response = await fetch(
+        "https://icon-kl-back.onrender.com/api/categories",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ name: newCategoryName }),
+        }
+      );
 
-  //       if (response.ok) {
-  //         setProducts(products.filter((product) => product._id !== id));
-  //         console.log("Product deleted successfully");
-  //       } else {
-  //         setError(`HTTP error: ${response.status}`);
-  //         console.error("Error deleting product:", error);
-  //       }
-  //     } catch (error) {
-  //       setError(error.message);
-  //       console.error("Error deleting product:", error);
-  //     }
-  //   };
+      if (response.ok) {
+        console.log("Category added successfully!");
+        setNewCategoryName("");
+        closeModalCategoryAdd();
+        handleGetCategories(); 
+      } else {
+        const errorData = await response.json();
+        console.error("Failed to add category:", errorData);
+      }
+    } catch (error) {
+      console.error("Error adding category:", error);
+    }
+  };
+
+  const handleSearch = (e) => {
+    const searchTerm = e.target.value;
+    setSearchTerm(searchTerm);
+    const lowercasedSearchTerm = searchTerm.toLowerCase();
+
+    const filtered = categories.filter((category) =>
+      category.name.toLowerCase().startsWith(lowercasedSearchTerm)
+    );
+    setFilteredCategories(filtered);
+  };
+
+  const handleUpdateCategory = async () => {
+    try {
+      console.log("Updating category with name:", editC.name);
+      const response = await fetch(
+        `https://icon-kl-back.onrender.com/api/categories/${editC._id}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(editC),
+        }
+      );
+
+      if (response.ok) {
+        handleGetCategories();
+        closeModalCategory();
+        console.log("Product updated successfully!");
+      } else {
+        setError(`HTTP error: ${response.status}`);
+        console.error("HTTP error:", response.status);
+      }
+    } catch (error) {
+      setError(error.message);
+      console.error("Error:", error);
+    }
+  };
+
+  const handleDeleteCategory = async (id) => {
+    try {
+      const response = await fetch(
+        `https://icon-kl-back.onrender.com/api/categories/${id}`,
+        {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (response.ok) {
+        setCategories(categories.filter((category) => category._id !== id));
+        console.log("Category deleted successfully");
+      } else {
+        setError(`HTTP error: ${response.status}`);
+        console.error("Error deleting category:", error);
+      }
+    } catch (error) {
+      setError(error.message);
+      console.error("Error deleting category:", error);
+    }
+  };
 
   useEffect(() => {
     handleGetCategories();
@@ -299,6 +408,8 @@ export function Dashboard() {
               type="search"
               placeholder="Search..."
               className="w-full rounded-lg bg-background pl-8 md:w-[200px] lg:w-[336px]"
+              value={searchTerm}
+              onChange={handleSearch}
             />
           </div>
           <DropdownMenu>
@@ -330,14 +441,6 @@ export function Dashboard() {
         <main className="grid flex-1 items-start gap-4 p-4 sm:px-6 sm:py-0 md:gap-8">
           <Tabs defaultValue="all">
             <div className="flex items-center">
-              {/* <TabsList>
-                <TabsTrigger value="all">All</TabsTrigger>
-                <TabsTrigger value="active">Active</TabsTrigger>
-                <TabsTrigger value="draft">Draft</TabsTrigger>
-                <TabsTrigger value="archived" className="hidden sm:flex">
-                  Archived
-                </TabsTrigger>
-              </TabsList> */}
               <div className="ml-auto flex items-center gap-2">
                 <Button size="sm" variant="outline" className="h-8 gap-1">
                   <File className="h-3.5 w-3.5" />
@@ -345,14 +448,20 @@ export function Dashboard() {
                     Export
                   </span>
                 </Button>
-                {/* <Link to="/admin/addProduct">
-                  <Button size="sm" className="h-8 gap-1" id="add">
+                <Link>
+                  <Button
+                    size="sm"
+                    className="h-8 gap-1"
+                    id="add"
+                    on
+                    onClick={openModalCategoryAdd}
+                  >
                     <PlusCircle className="h-3.5 w-3.5" />
                     <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-                      Add Product
+                      Add Category
                     </span>
                   </Button>
-                </Link> */}
+                </Link>
               </div>
             </div>
             <TabsContent value="all" className="md:w-[650px]">
@@ -361,7 +470,7 @@ export function Dashboard() {
                   <CardTitle>Categories</CardTitle>
                   <CardDescription>Manage your categories.</CardDescription>
                 </CardHeader>
-                <CardContent  className="md:w-[600px]">
+                <CardContent className="md:w-[600px]">
                   <Table>
                     <TableHeader>
                       <TableRow>
@@ -371,8 +480,8 @@ export function Dashboard() {
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {categories.length > 0 ? (
-                        categories.map((category) => (
+                      {filteredCategories.length > 0 ? (
+                        filteredCategories.map((category) => (
                           <TableRow key={category._id}>
                             <TableCell className="font-medium">
                               {category.name}
@@ -387,23 +496,21 @@ export function Dashboard() {
                                     variant="ghost"
                                   >
                                     <MoreHorizontal className="h-4 w-4" />
-                                    <span className="sr-only">Toggle menu</span>
                                   </Button>
                                 </DropdownMenuTrigger>
-                                <DropdownMenuContent align="end" id="actions" >
+                                <DropdownMenuContent align="end" id="actions">
                                   <DropdownMenuLabel id="actionsText">
                                     Actions
                                   </DropdownMenuLabel>
-                                  {/* <Link
-                                    to={`/admin/${product._id}/edit`}
-                                    id="edit"
-                                  >
-                                    <DropdownMenuItem>Edit</DropdownMenuItem>
-                                  </Link> */}
                                   <DropdownMenuItem
-                                  // onClick={() =>
-                                  //   handleDeleteProduct(product._id)
-                                  // }
+                                    onClick={() => openModalCategory(category)}
+                                  >
+                                    Edit
+                                  </DropdownMenuItem>
+                                  <DropdownMenuItem
+                                    onClick={() =>
+                                      handleDeleteCategory(category._id)
+                                    }
                                   >
                                     Delete
                                   </DropdownMenuItem>
@@ -414,25 +521,91 @@ export function Dashboard() {
                         ))
                       ) : (
                         <TableRow>
-                          <TableCell colSpan={6}>
-                            <p>No products available</p>
+                          <TableCell colSpan={3}>
+                            <p>No categories available</p>
                           </TableCell>
                         </TableRow>
                       )}
                     </TableBody>
                   </Table>
                 </CardContent>
-                {/* <CardFooter>
-                  <div className="text-xs text-muted-foreground">
-                    Showing <strong>1-10</strong> of <strong>32</strong>{" "}
-                    products
-                  </div>
-                </CardFooter> */}
               </Card>
             </TabsContent>
           </Tabs>
         </main>
       </div>
+      {isModalCategory && (
+        <div id="myModal" className={`modalCategory`}>
+          <div className="modal-contentC">
+            <button className="close2" onClick={closeModalCategory}>
+              &times;
+            </button>
+            <div className="modal_infoC">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Edit Category</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid gap-6">
+                    <div className="grid gap-3">
+                      <Label htmlFor="name">Name</Label>
+                      <textarea
+                        id="name"
+                        type="text"
+                        className="w-full"
+                        value={editC.name}
+                        onChange={(e) => {
+                          console.log("Edit category name:", e.target.value);
+                          setEditC((prevEdit) => ({
+                            ...prevEdit,
+                            name: e.target.value,
+                          }));
+                        }}
+                      />
+                    </div>
+                  </div>
+                </CardContent>
+                <Button size="sm" onClick={handleUpdateCategory}>
+                  Save Category
+                </Button>
+              </Card>
+            </div>
+          </div>
+        </div>
+      )}
+      {isModalCategoryAdd && (
+        <div id="myModal" className={`modalCategory`}>
+          <div className="modal-contentC">
+            <button className="close2" onClick={closeModalCategoryAdd}>
+              &times;
+            </button>
+            <div className="modal_infoC">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Add Category</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid gap-6">
+                    <div className="grid gap-3">
+                      <Label htmlFor="name">Name</Label>
+                      <textarea
+                        id="name"
+                        type="text"
+                        className="w-full"
+                        value={newCategoryName}
+                        onChange={(e) => setNewCategoryName(e.target.value)}
+                      />
+                    </div>
+                  </div>
+                </CardContent>
+                <Button size="sm" onClick={handleAddCategory}>
+                  Save Category
+                </Button>
+              </Card>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
