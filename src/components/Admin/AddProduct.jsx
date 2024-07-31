@@ -62,6 +62,7 @@ import { TooltipProvider } from "@radix-ui/react-tooltip";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft, faLayerGroup } from "@fortawesome/free-solid-svg-icons";
 import { useSelector } from "react-redux";
+import { notification } from "antd";
 
 export function Dashboard() {
   const [formData, setFormData] = useState({
@@ -75,6 +76,16 @@ export function Dashboard() {
   const [categoryOptions, setCategoryOptions] = useState([]);
   const { token } = useSelector((state) => state.auth);
 
+  const [api, contextHolder] = notification.useNotification();
+  const openNotificationWithIcon = (type) => {
+    api[type]({
+      message: type,
+      description:
+        type === "success"
+          ? "Product added successfully!"
+          : "Product not added!",
+    });
+  };
   useEffect(() => {
     const fetchCategories = async () => {
       try {
@@ -140,6 +151,7 @@ export function Dashboard() {
 
       if (response.ok) {
         console.log("Product added successfully!");
+        openNotificationWithIcon("success");
         setFormData({
           name: "",
           ingredients: [],
@@ -151,6 +163,7 @@ export function Dashboard() {
       } else {
         const errorData = await response.json();
         console.error("Failed to add product:", errorData);
+        openNotificationWithIcon("error");
       }
     } catch (error) {
       console.error("Error adding product:", error);
@@ -161,6 +174,7 @@ export function Dashboard() {
     <div className="flex min-h-screen w-full flex-col bg-muted/40">
       <aside className="fixed inset-y-0 left-0 z-10 hidden w-14 flex-col border-r bg-background sm:flex">
         <nav className="flex flex-col items-center gap-4 px-2 sm:py-5">
+          {contextHolder}
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>

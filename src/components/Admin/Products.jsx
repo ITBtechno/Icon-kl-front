@@ -64,6 +64,7 @@ import "./../styles/admin.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft, faLayerGroup } from "@fortawesome/free-solid-svg-icons";
 import { useSelector } from "react-redux";
+import { notification } from "antd";
 
 export function Dashboard() {
   const [products, setProducts] = useState([]);
@@ -71,6 +72,17 @@ export function Dashboard() {
   const { token } = useSelector((state) => state.auth);
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
+
+  const [api, contextHolder] = notification.useNotification();
+  const openNotificationWithIcon = (type) => {
+    api[type]({
+      message: type,
+      description:
+        type === "success"
+          ? "Product deleted successfully!"
+          : "Product not deleted!",
+    });
+  };
 
   const handleGetProducts = async () => {
     try {
@@ -127,9 +139,11 @@ export function Dashboard() {
       if (response.ok) {
         setProducts(products.filter((product) => product._id !== id));
         console.log("Product deleted successfully");
+        openNotificationWithIcon("success");
       } else {
         setError(`HTTP error: ${response.status}`);
         console.error("Error deleting product:", error);
+        openNotificationWithIcon("error");
       }
     } catch (error) {
       setError(error.message);
@@ -145,6 +159,7 @@ export function Dashboard() {
     <div className="flex min-h-screen w-full flex-col bg-muted/40">
       <aside className="fixed inset-y-0 left-0 z-10 hidden w-14 flex-col border-r bg-background sm:flex">
         <nav className="flex flex-col items-center gap-4 px-2 sm:py-5">
+          {contextHolder}
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>

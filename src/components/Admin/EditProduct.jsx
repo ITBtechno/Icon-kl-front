@@ -71,7 +71,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft, faLayerGroup } from "@fortawesome/free-solid-svg-icons";
 import { useSelector } from "react-redux";
 import { Select as AntdSelect } from "antd";
-
+import { notification } from "antd";
 export function Dashboard() {
   const [edit, setEdit] = useState({
     name: "",
@@ -84,6 +84,14 @@ export function Dashboard() {
   const [categories, setCategories] = useState([]);
   const { token } = useSelector((state) => state.auth);
   let { productId } = useParams();
+
+  const [api, contextHolder] = notification.useNotification();
+  const openNotificationWithIcon = (type) => {
+    api[type]({
+      message: type,
+      description: type === "success" ? "Product updated successfully!" : "Product not updated!",
+    });
+  };
 
   const handleGetEdit = async () => {
     try {
@@ -145,9 +153,11 @@ export function Dashboard() {
 
       if (response.ok) {
         console.log("Product updated successfully!");
+        openNotificationWithIcon("success");
       } else {
         setError(`HTTP error: ${response.status}`);
         console.error("HTTP error:", response.status);
+        openNotificationWithIcon("error");
       }
     } catch (error) {
       setError(error.message);
@@ -204,6 +214,7 @@ export function Dashboard() {
     <div className="flex min-h-screen w-full flex-col bg-muted/40">
       <aside className="fixed inset-y-0 left-0 z-10 hidden w-14 flex-col border-r bg-background sm:flex">
         <nav className="flex flex-col items-center gap-4 px-2 sm:py-5">
+          {contextHolder}
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
@@ -524,7 +535,7 @@ export function Dashboard() {
                     <div className="grid gap-3">
                       <Label htmlFor="category">Category</Label>
                       <Select
-                        value={edit.categoryId}
+                        value={edit?.categoryId?._id ?? edit.categoryId}
                         onValueChange={(value) =>
                           setEdit((prevEdit) => ({
                             ...prevEdit,

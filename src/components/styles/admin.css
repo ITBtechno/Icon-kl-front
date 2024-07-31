@@ -24,214 +24,215 @@
     --ring: 20 14.3% 4.1%;
     --radius: 0rem;
   }
+}
 
-  .dark {
-    --background: 20 14.3% 4.1%;
-    --foreground: 60 9.1% 97.8%;
-    --card: 20 14.3% 4.1%;
-    --card-foreground: 60 9.1% 97.8%;
-    --popover: 20 14.3% 4.1%;
-    --popover-foreground: 60 9.1% 97.8%;
-    --primary: 47.9 95.8% 53.1%;
-    --primary-foreground: 26 83.3% 14.1%;
-    --secondary: 12 6.5% 15.1%;
-    --secondary-foreground: 60 9.1% 97.8%;
-    --muted: 12 6.5% 15.1%;
-    --muted-foreground: 24 5.4% 63.9%;
-    --accent: 12 6.5% 15.1%;
-    --accent-foreground: 60 9.1% 97.8%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 60 9.1% 97.8%;
-    --border: 12 6.5% 15.1%;
-    --input: 12 6.5% 15.1%;
-    --ring: 35.5 91.7% 32.9%;
-    border: #e5e7eb;
-    border-radius: 10px;
-  }
+.dark {
+  --background: 20 14.3% 4.1%;
+  --foreground: 60 9.1% 97.8%;
+  --card: 20 14.3% 4.1%;
+  --card-foreground: 60 9.1% 97.8%;
+  --popover: 20 14.3% 4.1%;
+  --popover-foreground: 60 9.1% 97.8%;
+  --primary: 47.9 95.8% 53.1%;
+  --primary-foreground: 26 83.3% 14.1%;
+  --secondary: 12 6.5% 15.1%;
+  --secondary-foreground: 60 9.1% 97.8%;
+  --muted: 12 6.5% 15.1%;
+  --muted-foreground: 24 5.4% 63.9%;
+  --accent: 12 6.5% 15.1%;
+  --accent-foreground: 60 9.1% 97.8%;
+  --destructive: 0 62.8% 30.6%;
+  --destructive-foreground: 60 9.1% 97.8%;
+  --border: 12 6.5% 15.1%;
+  --input: 12 6.5% 15.1%;
+  --ring: 35.5 91.7% 32.9%;
+  border: #e5e7eb;
+  border-radius: 10px;
+}
 
-  .flex {
-    color: white;
-  }
+.flex {
+  color: white;
+}
 
-  #status {
-    color: white !important;
-  }
-  #breadcrumb {
-    background-color: rgb(30, 30, 30) !important;
-  }
-  #page {
-    color: hsl(25 5.3% 44.7%) !important;
-  }
-  .bg-muted\/40 {
-    background-color: rgb(30, 30, 30) !important;
-  }
+#status {
+  color: white !important;
+}
+#breadcrumb {
+  background-color: rgb(30, 30, 30) !important;
+}
+#page {
+  color: hsl(25 5.3% 44.7%) !important;
+}
+.bg-muted\/40 {
+  background-color: rgb(30, 30, 30) !important;
+}
 
-  #actions {
+#actions {
+  background-color: black !important;
+}
+
+#actionsText {
+  color: white !important;
+}
+
+.text-card-foreground {
+  color: white !important;
+}
+
+.border {
+  border-radius: 10px;
+}
+
+.rounded-lg {
+  background-color: black !important;
+}
+
+.p-6 {
+  background-color: black !important;
+}
+
+.text-muted-foreground {
+  background-color: black !important;
+}
+
+tr {
+  background-color: black !important;
+  color: white;
+}
+
+#add {
+  background-color: hsl(47.9 95.8% 53.1%) !important;
+}
+
+#back {
+  background-color: black !important;
+}
+
+#name {
+  background-color: black !important;
+  width: 96% !important;
+}
+
+#description {
+  background-color: black !important;
+  width: 96% !important;
+}
+
+.stocks {
+  background-color: black !important;
+  z-index: 103 !important;
+}
+
+#discardBtn {
+  background-color: black !important;
+}
+
+.modalCategory {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: black;
+  z-index: 100000;
+  transition: 0.5s;
+}
+
+.modal-contentC {
+  background-color: black;
+  width: 512px;
+  height: auto;
+  border-radius: 10px;
+  padding: 20px;
+}
+
+.choiceC {
+  font-size: 24px;
+  font-weight: 500;
+  background-color: black;
+  color: white;
+}
+
+.modal_infoC {
+  background-color: black !important;
+  border: 1px solid rgba(255, 255, 255, 0.474);
+}
+
+.saveBtn {
+  margin-left: 395px !important;
+}
+
+@media (max-width: 768px) {
+  .bg-background {
     background-color: black !important;
   }
+}
 
-  #actionsText {
-    color: white !important;
-  }
+#copy {
+  background-color: black !important;
+  color: white !important;
+}
 
-  .text-card-foreground {
-    color: white !important;
-  }
+.ml-auto button {
+  background-color: black !important;
+}
 
-  .border {
-    border-radius: 10px;
-  }
+#orderDetails {
+  background-color: black !important;
+}
 
-  .rounded-lg {
-    background-color: black !important;
-  }
+.sm\:grid-cols-3 {
+  display: grid;
+  grid-template-columns: repeat(1, minmax(0, 1fr)) !important;
+}
 
-  .p-6 {
-    background-color: black !important;
-  }
+.upload {
+  background-color: black !important;
+}
 
-  .text-muted-foreground {
-    background-color: black !important;
-  }
+#account {
+  background-color: black !important;
+}
 
-  tr {
-    background-color: black !important;
-    color: white;
-  }
+textarea {
+  background-color: black !important;
+  width: 96% !important;
+}
 
-  #add {
-    background-color: hsl(47.9 95.8% 53.1%) !important;
-  }
+.right {
+  z-index: 100 !important;
+}
 
-  #back {
-    background-color: black !important;
-  }
+.hidden {
+  z-index: 98 !important;
+}
 
-  #name {
-    background-color: black !important;
-    width: 96% !important;
-  }
+#price {
+  background-color: black !important;
+  width: 96% !important;
+}
 
-  #description {
-    background-color: black !important;
-    width: 96% !important;
-  }
+#myAccount {
+  color: white !important;
+}
 
-  .stocks {
-    background-color: black !important;
-    z-index: 103 !important;
-  }
+aside {
+  background-color: black !important;
+}
 
-  #discardBtn {
-    background-color: black !important;
-  }
+a {
+  color: white !important;
+}
 
-  .modalCategory {
-    position: fixed;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background-color: black;
-    z-index: 100000;
-    transition: 0.5s;
-  }
+#edit:hover {
+  color: black !important;
+}
 
-  .modal-contentC {
-    background-color: black;
-    width: 512px;
-    height: auto;
-    border-radius: 10px;
-    padding: 20px;
-  }
-
-  .choiceC {
-    font-size: 24px;
-    font-weight: 500;
-    background-color: black;
-    color: white;
-  }
-
-  .modal_infoC {
-    background-color: black !important;
-    border: 1px solid rgba(255, 255, 255, 0.474);
-  }
-
-  .saveBtn {
-    margin-left: 395px !important;
-  }
-
-  @media (max-width: 768px) {
-    .bg-background {
-      background-color: black !important;
-    }
-  }
-
-  #copy {
-    background-color: black !important;
-    color: white !important;
-  }
-
-  .ml-auto button {
-    background-color: black !important;
-  }
-
-  #orderDetails {
-    background-color: black !important;
-  }
-
-  .sm\:grid-cols-3 {
-    display: grid;
-    grid-template-columns: repeat(1, minmax(0, 1fr)) !important;
-  }
-
-  .upload {
-    background-color: black !important;
-  }
-
-  #account {
-    background-color: black !important;
-  }
-
-  textarea {
-    background-color: black !important;
-    width: 96% !important;
-  }
-
-  .right {
-    z-index: 100 !important;
-  }
-
-  .hidden {
-    z-index: 98 !important;
-  }
-
-  #price {
-    background-color: black !important;
-    width: 96% !important;
-  }
-
-  #myAccount {
-    color: white !important;
-  }
-
-  aside {
-    background-color: black !important;
-  }
-
-  a {
-    color: white !important;
-  }
-
-  #edit:hover {
-    color: black !important;
-  }
-
-  .ant-select {
-    background-color: #1e1e1e !important;
-  }
+.ant-select {
+  background-color: #1e1e1e !important;
+}
 
 .ant-select-selector {
   background-color: #000 !important;
