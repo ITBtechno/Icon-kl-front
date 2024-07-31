@@ -156,7 +156,7 @@ export function Dashboard() {
         console.log("Category added successfully!");
         setNewCategoryName("");
         closeModalCategoryAdd();
-        handleGetCategories(); 
+        handleGetCategories();
       } else {
         const errorData = await response.json();
         console.error("Failed to add category:", errorData);
@@ -565,7 +565,11 @@ export function Dashboard() {
                     </div>
                   </div>
                 </CardContent>
-                <Button size="sm" onClick={handleUpdateCategory}>
+                <Button
+                  className="saveBtn"
+                  size="sm"
+                  onClick={handleUpdateCategory}
+                >
                   Save Category
                 </Button>
               </Card>
@@ -598,7 +602,11 @@ export function Dashboard() {
                     </div>
                   </div>
                 </CardContent>
-                <Button size="sm" onClick={handleAddCategory}>
+                <Button
+                  className="saveBtn"
+                  size="sm"
+                  onClick={handleAddCategory}
+                >
                   Save Category
                 </Button>
               </Card>

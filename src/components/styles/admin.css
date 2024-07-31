@@ -159,6 +159,10 @@
     border: 1px solid rgba(255, 255, 255, 0.474);
   }
 
+  .saveBtn {
+    margin-left: 395px !important;
+  }
+
   @media (max-width: 768px) {
     .bg-background {
       background-color: black !important;
