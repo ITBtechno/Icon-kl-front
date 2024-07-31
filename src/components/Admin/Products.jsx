@@ -69,6 +69,8 @@ export function Dashboard() {
   const [products, setProducts] = useState([]);
   const [error, setError] = useState(null);
   const { token } = useSelector((state) => state.auth);
+  const [filteredProducts, setFilteredProducts] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
 
   const handleGetProducts = async () => {
     try {
@@ -86,6 +88,7 @@ export function Dashboard() {
       if (response.ok) {
         const data = await response.json();
         setProducts(data);
+        setFilteredProducts(data);
         console.log(data);
       } else {
         setError(`HTTP error: ${response.status}`);
@@ -95,6 +98,17 @@ export function Dashboard() {
       setError(error.message);
       console.error("Error:", error);
     }
+  };
+
+  const handleSearch = (e) => {
+    const searchTerm = e.target.value;
+    setSearchTerm(searchTerm);
+    const lowercasedSearchTerm = searchTerm.toLowerCase();
+
+    const filtered = products.filter((product) =>
+      product.name.toLowerCase().includes(lowercasedSearchTerm)
+    );
+    setFilteredProducts(filtered);
   };
 
   const handleDeleteProduct = async (id) => {
@@ -299,6 +313,8 @@ export function Dashboard() {
               type="search"
               placeholder="Search..."
               className="w-full rounded-lg bg-background pl-8 md:w-[200px] lg:w-[336px]"
+              value={searchTerm}
+              onChange={handleSearch}
             />
           </div>
           <DropdownMenu>
@@ -384,8 +400,8 @@ export function Dashboard() {
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {products.length > 0 ? (
-                        products.map((product) => (
+                      {filteredProducts.length > 0 ? (
+                        filteredProducts.map((product) => (
                           <TableRow key={product._id}>
                             <TableCell className="hidden sm:table-cell">
                               <img

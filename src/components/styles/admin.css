@@ -126,6 +126,43 @@
     background-color: black !important;
   }
 
+  .modalCategory {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: black;
+    z-index: 100000;
+    transition: 0.5s;
+  }
+
+  .modal-contentC {
+    background-color: black;
+    width: 512px;
+    height: auto;
+    border-radius: 10px;
+    padding: 20px;
+  }
+
+  .choiceC {
+    font-size: 24px;
+    font-weight: 500;
+    background-color: black;
+    color: white;
+  }
+
+  .modal_infoC {
+    background-color: black !important;
+    border: 1px solid rgba(255, 255, 255, 0.474);
+  }
+
+  .saveBtn {
+    margin-left: 395px !important;
+  }
+
   @media (max-width: 768px) {
     .bg-background {
       background-color: black !important;
@@ -191,10 +228,10 @@
   #edit:hover {
     color: black !important;
   }
-}
-.ant-select {
-  background-color: #000 !important;
-}
+
+  .ant-select {
+    background-color: #1e1e1e !important;
+  }
 
 .ant-select-selector {
   background-color: #000 !important;

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import {
   ChevronLeft,
@@ -82,6 +82,8 @@ export function Dashboard() {
   const [error, setError] = useState(null);
   const dispatch = useDispatch();
   const { token } = useSelector((state) => state.auth);
+  const [filteredOrders, setFilteredOrders] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
     const token = Cookies.get("accessToken");
@@ -106,6 +108,7 @@ export function Dashboard() {
       if (response.ok) {
         const data = await response.json();
         setOrders(data);
+        setFilteredOrders(data);
         console.log(data);
       } else {
         setError(`HTTP error: ${response.status}`);
@@ -120,6 +123,23 @@ export function Dashboard() {
   useEffect(() => {
     handleGetOrders();
   }, []);
+
+  const handleSearch = useCallback(
+    (e) => {
+      const searchTerm = e.target.value;
+      setSearchTerm(searchTerm);
+
+      const lowercasedSearchTerm = searchTerm.toLowerCase();
+      const filtered = orders.filter((order) =>
+        order.orderByUserId.fullname
+          .toLowerCase()
+          .includes(lowercasedSearchTerm)
+      );
+      setFilteredOrders(filtered);
+    },
+    [orders]
+  );
+
   return (
     <div className="flex min-h-screen w-full flex-col bg-muted/40">
       <aside className="fixed inset-y-0 left-0 z-10 hidden w-14 flex-col border-r bg-background sm:flex">
@@ -292,6 +312,8 @@ export function Dashboard() {
               type="search"
               placeholder="Search..."
               className="w-full rounded-lg bg-background pl-8 md:w-[200px] lg:w-[336px]"
+              value={searchTerm}
+              onChange={handleSearch}
             />
           </div>
           <DropdownMenu>
@@ -392,8 +414,8 @@ export function Dashboard() {
                         </TableRow>
                       </TableHeader>
                       <TableBody>
-                        {orders.length > 0 ? (
-                          orders.map((order) => (
+                        {filteredOrders.length > 0 ? (
+                          filteredOrders.map((order) => (
                             <TableRow key={order._id}>
                               <TableCell>
                                 <div className="font-medium">
@@ -403,17 +425,11 @@ export function Dashboard() {
                                   {order?.orderByUserId?.email}
                                 </div>
                               </TableCell>
-                              {/* <TableCell className="hidden sm:table-cell">
-                                Sale
-                              </TableCell> */}
                               <TableCell className="hidden sm:table-cell">
                                 <Badge className="text-xs" variant="secondary">
                                   {order.status}
                                 </Badge>
                               </TableCell>
-                              {/* <TableCell className="hidden md:table-cell">
-                                2023-06-23
-                              </TableCell> */}
                               <TableCell className="text-right">
                                 {order.amount}
                               </TableCell>
