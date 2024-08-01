@@ -72,6 +72,7 @@ import "./../styles/admin.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft, faLayerGroup } from "@fortawesome/free-solid-svg-icons";
 import { useSelector } from "react-redux";
+import { notification } from "antd";
 
 export function Dashboard() {
   const [categories, setCategories] = useState([]);
@@ -89,7 +90,34 @@ export function Dashboard() {
     _id: "",
   });
   const [newCategoryName, setNewCategoryName] = useState("");
-
+  const [api, contextHolder] = notification.useNotification();
+  const notificationDelete = (type) => {
+    api[type]({
+      message: type,
+      description:
+        type === "success"
+          ? "Product deleted successfully!"
+          : "Product not deleted!",
+    });
+  };
+  const notificationAdd = (type) => {
+    api[type]({
+      message: type,
+      description:
+        type === "success"
+          ? "Product deleted successfully!"
+          : "Product not deleted!",
+    });
+  };
+  const notificationEdit = (type) => {
+    api[type]({
+      message: type,
+      description:
+        type === "success"
+          ? "Product deleted successfully!"
+          : "Product not deleted!",
+    });
+  };
   const openModalCategory = (category) => {
     setSelectedCategory(category);
     setEditC({ name: category.name, _id: category._id });
@@ -157,9 +185,11 @@ export function Dashboard() {
         setNewCategoryName("");
         closeModalCategoryAdd();
         handleGetCategories();
+        notificationAdd("success");
       } else {
         const errorData = await response.json();
         console.error("Failed to add category:", errorData);
+        notificationAdd("error");
       }
     } catch (error) {
       console.error("Error adding category:", error);
@@ -220,7 +250,12 @@ export function Dashboard() {
       );
 
       if (response.ok) {
-        setCategories(categories.filter((category) => category._id !== id));
+        setCategories((prevCategories) =>
+          prevCategories.filter((category) => category._id !== id)
+        );
+        setFilteredCategories((prevFilteredCategories) =>
+          prevFilteredCategories.filter((category) => category._id !== id)
+        );
         console.log("Category deleted successfully");
       } else {
         setError(`HTTP error: ${response.status}`);
@@ -240,6 +275,7 @@ export function Dashboard() {
     <div className="flex min-h-screen w-full flex-col bg-muted/40">
       <aside className="fixed inset-y-0 left-0 z-10 hidden w-14 flex-col border-r bg-background sm:flex">
         <nav className="flex flex-col items-center gap-4 px-2 sm:py-5">
+          {contextHolder}
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>

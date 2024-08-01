@@ -137,12 +137,17 @@ export function Dashboard() {
       );
 
       if (response.ok) {
-        setProducts(products.filter((product) => product._id !== id));
+        setProducts((prevProducts) =>
+          prevProducts.filter((product) => product._id !== id)
+        );
+        setFilteredProducts((prevFilteredProducts) =>
+          prevFilteredProducts.filter((product) => product._id !== id)
+        );
         console.log("Product deleted successfully");
         openNotificationWithIcon("success");
       } else {
         setError(`HTTP error: ${response.status}`);
-        console.error("Error deleting product:", error);
+        console.error("Error deleting product:", response.status);
         openNotificationWithIcon("error");
       }
     } catch (error) {
