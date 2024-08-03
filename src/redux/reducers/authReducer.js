@@ -32,9 +32,11 @@ const authReducer = (state = initialState, action) => {
         role: null,
         isAuthenticated: false,
       };
-    case "USER":
+    case "UPDATE_USER":
       return {
         ...state,
+        fullname: action.payload.fullname,
+        gender: action.payload.gender,
       };
     default:
       return state;

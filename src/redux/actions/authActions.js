@@ -21,7 +21,7 @@ export const loginSuccess = (token) => {
 
   const { userId, fullname, gender, role, email } = decodedToken;
   Cookies.set("userInfo", JSON.stringify(decodedToken), { expires: 7 });
-  
+
   return {
     type: "LOGIN_SUCCESS",
     payload: { token, userId, fullname, gender, role, email },
@@ -36,3 +36,8 @@ export const logout = () => {
     type: "LOGOUT",
   };
 };
+
+export const updateUser = (user) => ({
+  type: "UPDATE_USER",
+  payload: user,
+});

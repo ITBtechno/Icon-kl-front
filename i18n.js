@@ -26,7 +26,7 @@ const resources = {
       select: "Seç",
       "log in": "Giriş et",
       email: "E-mailinizi daxil edin",
-      continue: "Dəvam et",
+      continue: "Davam et",
       edit: "Düzəliş et",
       "log out": "Çıxış",
       "my acc": "Hesabım",

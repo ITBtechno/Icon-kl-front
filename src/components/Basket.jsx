@@ -62,7 +62,7 @@ export default function Basket() {
 
   const openBasketModal = () => {
     if (!isAuthenticated) {
-      alert("Lütfen sipariş vermek için giriş yapın.");
+      alert("Sifariş vermək üçün giriş edin.");
       return;
     }
     setBasketModalOpen(true);
