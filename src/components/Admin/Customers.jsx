@@ -29,6 +29,7 @@ import { useSelector } from "react-redux";
 import "./../styles/admin.css";
 import Aside from "./Aside";
 import HeaderAdmin from "./HeaderAdmin";
+import { BackTop } from "antd";
 
 export function Dashboard() {
   const [customers, setCustomers] = useState([]);
@@ -190,6 +191,7 @@ export function Dashboard() {
   return (
     <div className="flex min-h-screen w-full flex-col bg-muted/40">
       <Aside />
+      <BackTop />
       <div className="flex flex-col sm:gap-4 sm:py-4 sm:pl-14">
         <HeaderAdmin
           searchTerm={searchTerm}
@@ -266,9 +268,6 @@ export function Dashboard() {
                                   </Button>
                                 </DropdownMenuTrigger>
                                 <DropdownMenuContent align="end" id="actions">
-                                  <DropdownMenuLabel id="actionsText">
-                                    Actions
-                                  </DropdownMenuLabel>
                                   <DropdownMenuItem
                                     onClick={() =>
                                       handleDeleteCustomer(customer.email)

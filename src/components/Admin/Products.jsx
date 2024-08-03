@@ -50,7 +50,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Tabs, TabsContent } from "@/components/ui/tabs";
-import { notification } from "antd";
+import { BackTop, notification } from "antd";
 import { useSelector } from "react-redux";
 import "./../styles/admin.css";
 import Aside from "./Aside";
@@ -153,6 +153,7 @@ export function Dashboard() {
   return (
     <div className="flex min-h-screen w-full flex-col bg-muted/40">
       {contextHolder}
+      <BackTop />
       <Aside />
       <div className="flex flex-col sm:gap-4 sm:py-4 sm:pl-14">
         <HeaderAdmin
@@ -259,9 +260,6 @@ export function Dashboard() {
                                   </Button>
                                 </DropdownMenuTrigger>
                                 <DropdownMenuContent align="end" id="actions">
-                                  <DropdownMenuLabel id="actionsText">
-                                    Actions
-                                  </DropdownMenuLabel>
                                   <Link
                                     to={`/admin/${product._id}/edit`}
                                     id="edit"

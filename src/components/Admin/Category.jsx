@@ -270,19 +270,19 @@ export function Dashboard() {
                 </Link>
               </div>
             </div>
-            <TabsContent value="all" className="md:w-[1400px]">
+            <TabsContent value="all">
               <Card x-chunk="dashboard-06-chunk-0">
                 <CardHeader>
                   <CardTitle>Categories</CardTitle>
                   <CardDescription>Manage your categories.</CardDescription>
                 </CardHeader>
-                <CardContent className="md:w-[1000px]">
+                <CardContent>
                   <Table>
                     <TableHeader>
                       <TableRow>
                         <TableHead>Categories</TableHead>
                         <TableHead>Items</TableHead>
-                        <TableHead className="hidden md:table-cell"></TableHead>
+                        <TableHead className="hidden sm:table-cell"></TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -292,7 +292,21 @@ export function Dashboard() {
                             <TableCell className="font-medium">
                               {category.name}
                             </TableCell>
-                            <TableCell>{category.items.length}</TableCell>
+                            <TableCell>
+                              <div className="font-medium">
+                                {category?.items.map((item, index) => (
+                                  <span key={index}>
+                                    {Array.isArray(item?.name)
+                                      ? item.name.join(", ")
+                                      : item?.name}
+                                    {index < category.items.length - 1 && ", "}
+                                  </span>
+                                ))}
+                              </div>
+                              <div className="hidden text-sm text-muted-foreground md:inline">
+                                {category?.items.length}
+                              </div>
+                            </TableCell>
                             <TableCell>
                               <DropdownMenu>
                                 <DropdownMenuTrigger asChild>
@@ -305,9 +319,6 @@ export function Dashboard() {
                                   </Button>
                                 </DropdownMenuTrigger>
                                 <DropdownMenuContent align="end" id="actions">
-                                  <DropdownMenuLabel id="actionsText">
-                                    Actions
-                                  </DropdownMenuLabel>
                                   <DropdownMenuItem
                                     onClick={() => openModalCategory(category)}
                                   >

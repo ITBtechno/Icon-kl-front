@@ -31,6 +31,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { loginSuccess } from "../../redux/actions/authActions";
 import Aside from "./Aside";
 import HeaderAdmin from "./HeaderAdmin";
+import { BackTop } from "antd";
 
 export function Dashboard() {
   const [orders, setOrders] = useState([]);
@@ -98,6 +99,7 @@ export function Dashboard() {
   return (
     <div className="flex min-h-screen w-full flex-col bg-muted/40">
       <Aside />
+      <BackTop />
       <div className="flex flex-col sm:gap-4 sm:py-4 sm:pl-14">
         <HeaderAdmin
           searchTerm={searchTerm}

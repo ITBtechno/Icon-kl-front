@@ -241,3 +241,15 @@ a {
 .ant-select-selector span {
   background-color: #1c1c1c !important;
 }
+.ant-back-top-icon {
+  background-color: #facc15;
+}
+#actions {
+  background-color: #1e1e1e !important;
+  padding: 0;
+  margin: 3px 0;
+}
+:where(.css-dev-only-do-not-override-1uq9j6g).ant-back-top {
+  inset-inline-end: 30px;
+  inset-block-end: 25px;
+}
