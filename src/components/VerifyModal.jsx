@@ -1,30 +1,24 @@
-// VerifyModal.js
-import React, { useRef, useState, useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { loginSuccess, updateUser } from "../redux/actions/authActions";
+import React, { useRef, useState } from "react";
+import { useDispatch } from "react-redux";
+import { loginSuccess } from "../redux/actions/authActions";
 
-const VerifyModal = ({
-  isOpen,
-  onClose,
-  email,
-  onSuccess,
-  handleUserUpdate,
-}) => {
+const VerifyModal = ({ isOpen, onClose, email, onSuccess }) => {
   const [otpDigits, setOtpDigits] = useState(["", "", "", ""]);
   const [message, setMessage] = useState("");
+  const [token, setToken] = useState("");
   const dispatch = useDispatch();
+  const [isModalUserOpen, setModalUserOpen] = useState(false);
   const [userName, setUserName] = useState("");
   const [userGender, setUserGender] = useState("");
   const inputRefs = useRef([]);
-  const token = useSelector((state) => state.auth.token);
-  const user = useSelector((state) => state.auth);
 
-  useEffect(() => {
-    if (user) {
-      setUserName(user.fullname);
-      setUserGender(user.gender);
-    }
-  }, [user]);
+  const openModalUser = () => {
+    setModalUserOpen(true);
+  };
+
+  const closeModalUser = () => {
+    setModalUserOpen(false);
+  };
 
   const handleChange = (index, value) => {
     if (/[0-9]/.test(value) || value === "") {
@@ -55,25 +49,41 @@ const VerifyModal = ({
 
       if (response.ok) {
         const data = await response.json();
+        console.log("Verification Response:", data);
         if (
           data.message ===
           "OTP verified and user information updated successfully!"
         ) {
           const { token, userId } = data;
-          dispatch(loginSuccess(token));
+          setToken(token);
+          dispatch(loginSuccess(token, userId));
           setMessage(data.message);
           onClose();
           onSuccess(userId);
+          openModalUser();
         } else {
           setMessage("Unexpected response from server.");
         }
       } else {
         const errorData = await response.json();
+        console.error("Error verifying OTP:", errorData);
         setMessage("Error verifying OTP. Please try again later.");
       }
     } catch (error) {
+      console.error("Error:", error);
       setMessage("Error verifying OTP. Please try again later.");
     }
+  };
+
+  const handleUserUpdate = async (e) => {
+    e.preventDefault();
+    const formData = new FormData(e.target);
+    const name = formData.get("name");
+    const gender = formData.get("gender");
+    setUserName(name);
+    setUserGender(gender);
+    closeModalUser();
+    onSuccess(name, gender);
   };
 
   if (!isOpen) return null;
@@ -108,52 +118,54 @@ const VerifyModal = ({
           {message && <p>{message}</p>}
         </div>
       </div>
-      <div id="myModalUser" className="modal2">
-        <div className="modal-content2">
-          <button className="close2" onClick={onClose}>
-            &times;
-          </button>
-          <div className="modal_info2">
-            <div className="choice2">Update User Information</div>
-            <form onSubmit={handleUserUpdate}>
-              <div>
-                <input
-                  type="text"
-                  placeholder="Ad və Soyad"
-                  name="name"
-                  onChange={(e) => setUserName(e.target.value)}
-                  value={userName}
-                />
-              </div>
-              <div>
-                <label htmlFor="male">Kişi</label>
-                <input
-                  type="radio"
-                  name="gender"
-                  id="male"
-                  value="male"
-                  checked={userGender === "male"}
-                  onChange={() => setUserGender("male")}
-                />
-                <label htmlFor="female">Qadın</label>
-                <input
-                  type="radio"
-                  name="gender"
-                  id="female"
-                  value="female"
-                  checked={userGender === "female"}
-                  onChange={() => setUserGender("female")}
-                />
-              </div>
-              <div className="continue">
-                <button className="continueBtn" type="submit">
-                  Yadda saxla
-                </button>
-              </div>
-            </form>
+      {isModalUserOpen && (
+        <div id="myModalUser" className="modal2">
+          <div className="modal-content2">
+            <button className="close2" onClick={closeModalUser}>
+              &times;
+            </button>
+            <div className="modal_info2">
+              <div className="choice2">Update User Information</div>
+              <form onSubmit={handleUserUpdate}>
+                <div>
+                  <input
+                    type="text"
+                    placeholder="Ad və Soyad"
+                    name="name"
+                    onChange={(e) => setUserName(e.target.value)}
+                    value={userName}
+                  />
+                </div>
+                <div>
+                  <label htmlFor="male">Kişi</label>
+                  <input
+                    type="radio"
+                    name="gender"
+                    id="male"
+                    value="male"
+                    checked={userGender === "male"}
+                    onChange={() => setUserGender("male")}
+                  />
+                  <label htmlFor="female">Qadın</label>
+                  <input
+                    type="radio"
+                    name="gender"
+                    id="female"
+                    value="female"
+                    checked={userGender === "female"}
+                    onChange={() => setUserGender("female")}
+                  />
+                </div>
+                <div className="continue">
+                  <button className="continueBtn" type="submit">
+                    Yadda saxla
+                  </button>
+                </div>
+              </form>
+            </div>
           </div>
         </div>
-      </div>
+      )}
     </div>
   );
 };
