@@ -1,4 +1,3 @@
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -7,6 +6,13 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
@@ -35,11 +41,11 @@ import { BackTop } from "antd";
 
 export function Dashboard() {
   const [orders, setOrders] = useState([]);
+  const [filteredOrders, setFilteredOrders] = useState([]);
   const [error, setError] = useState(null);
+  const [searchTerm, setSearchTerm] = useState("");
   const dispatch = useDispatch();
   const { token } = useSelector((state) => state.auth);
-  const [filteredOrders, setFilteredOrders] = useState([]);
-  const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
     const token = Cookies.get("accessToken");
@@ -48,7 +54,13 @@ export function Dashboard() {
     }
   }, [dispatch]);
 
-  const handleGetOrders = async () => {
+  useEffect(() => {
+    if (token) {
+      fetchOrders();
+    }
+  }, [token]);
+
+  const fetchOrders = async () => {
     try {
       const response = await fetch(
         "https://icon-kl-back.onrender.com/api/orders/",
@@ -65,20 +77,47 @@ export function Dashboard() {
         const data = await response.json();
         setOrders(data);
         setFilteredOrders(data);
-        console.log(data);
       } else {
         setError(`HTTP error: ${response.status}`);
-        console.error("HTTP error:", response.status);
       }
     } catch (error) {
       setError(error.message);
-      console.error("Error:", error);
     }
   };
 
-  useEffect(() => {
-    handleGetOrders();
-  }, []);
+  const handleStatusChange = async (orderId, newStatus) => {
+    try {
+      const response = await fetch(
+        `https://icon-kl-back.onrender.com/api/orders/${orderId}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ status: newStatus }),
+        }
+      );
+
+      if (response.ok) {
+        const updatedOrder = await response.json();
+        setOrders((prevOrders) =>
+          prevOrders.map((order) =>
+            order._id === updatedOrder._id ? updatedOrder : order
+          )
+        );
+        setFilteredOrders((prevOrders) =>
+          prevOrders.map((order) =>
+            order._id === updatedOrder._id ? updatedOrder : order
+          )
+        );
+      } else {
+        setError(`HTTP error: ${response.status}`);
+      }
+    } catch (error) {
+      setError(error.message);
+    }
+  };
 
   const handleSearch = useCallback(
     (e) => {
@@ -95,6 +134,7 @@ export function Dashboard() {
     },
     [orders]
   );
+console.log(orders);
 
   return (
     <div className="flex min-h-screen w-full flex-col bg-muted/40">
@@ -111,11 +151,6 @@ export function Dashboard() {
             <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-2 xl:grid-cols-4"></div>
             <Tabs defaultValue="week">
               <div className="flex items-center">
-                {/* <TabsList>
-                  <TabsTrigger value="week">Week</TabsTrigger>
-                  <TabsTrigger value="month">Month</TabsTrigger>
-                  <TabsTrigger value="year">Year</TabsTrigger>
-                </TabsList> */}
                 <div className="ml-auto flex items-center gap-2">
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
@@ -131,7 +166,7 @@ export function Dashboard() {
                     <DropdownMenuContent align="end">
                       <DropdownMenuLabel>Filter by</DropdownMenuLabel>
                       <DropdownMenuSeparator />
-                      <DropdownMenuCheckboxItem checked>
+                      <DropdownMenuCheckboxItem defaultChecked>
                         Fulfilled
                       </DropdownMenuCheckboxItem>
                       <DropdownMenuCheckboxItem>
@@ -153,7 +188,7 @@ export function Dashboard() {
                 </div>
               </div>
               <TabsContent value="week">
-                <Card x-chunk="dashboard-05-chunk-3">
+                <Card>
                   <CardHeader className="px-7">
                     <CardTitle>Orders</CardTitle>
                     <CardDescription>
@@ -165,15 +200,9 @@ export function Dashboard() {
                       <TableHeader>
                         <TableRow>
                           <TableHead>Customer</TableHead>
-                          {/* <TableHead className="hidden sm:table-cell">
-                            Type
-                          </TableHead> */}
                           <TableHead className="hidden sm:table-cell">
                             Status
                           </TableHead>
-                          {/* <TableHead className="hidden md:table-cell">
-                            Date
-                          </TableHead> */}
                           <TableHead className="text-right">Amount</TableHead>
                         </TableRow>
                       </TableHeader>
@@ -190,12 +219,53 @@ export function Dashboard() {
                                 </div>
                               </TableCell>
                               <TableCell className="hidden sm:table-cell">
-                                <Badge className="text-xs" variant="secondary">
-                                  {order.status}
-                                </Badge>
+                                <Select
+                                  value={order.status}
+                                  onValueChange={(value) =>
+                                    handleStatusChange(order._id, value)
+                                  }
+                                >
+                                  <SelectTrigger className="stocks" id="status">
+                                    <SelectValue placeholder="Select status" />
+                                  </SelectTrigger>
+                                  <SelectContent className="stocks">
+                                    {[
+                                      "Fulfilled",
+                                      "Declined",
+                                      "Refunded",
+                                      "Pending",
+                                      "In Progress",
+                                      "Complete",
+                                    ].map((status) => (
+                                      <SelectItem key={status} value={status}>
+                                        {status}
+                                      </SelectItem>
+                                    ))}
+                                  </SelectContent>
+                                </Select>
                               </TableCell>
                               <TableCell className="text-right">
-                                {order.amount}
+                                {order.items
+                                  .map(
+                                    (i) =>
+                                      `${i?.itemId?.name} × ${i?.itemCount}`
+                                  )
+                                  .join(", ")}
+                              </TableCell>
+                              <TableCell className="text-right">
+                                {order.paymentMethod}
+                              </TableCell>
+                              <TableCell className="text-right">
+                                {order?.promocode?.code || "none"}
+                              </TableCell>
+                              <TableCell className="text-sm">
+                                {new Date(order.createdAt).toLocaleString()}
+                              </TableCell>
+                              <TableCell className="text-sm">
+                                {new Date(order.updatedAt).toLocaleString()}
+                              </TableCell>
+                              <TableCell className="text-right">
+                                {order.amount}₼
                               </TableCell>
                             </TableRow>
                           ))
