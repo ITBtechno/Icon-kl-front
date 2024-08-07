@@ -31,7 +31,7 @@ import {
 } from "@/components/ui/table";
 import { Tabs, TabsContent } from "@/components/ui/tabs";
 import Cookies from "js-cookie";
-import { File, ListFilter } from "lucide-react";
+import { File, ListFilter, Trash2, Trash2Icon, TrashIcon } from "lucide-react";
 import React, { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { loginSuccess } from "../../redux/actions/authActions";
@@ -118,6 +118,30 @@ export function Dashboard() {
       setError(error.message);
     }
   };
+  const handleDeleteOrder = async (orderId) => {
+    try {
+      const response = await fetch(
+        `https://icon-kl-back.onrender.com/api/orders/${orderId}`,
+        {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (response.ok) {
+        const updatedOrder = await response.json();
+        setOrders((order) => order.filter((x) => x._id !== x.orderId));
+        setFilteredOrders((order) => order.filter((x) => x._id !== x.orderId));
+      } else {
+        setError(`HTTP error: ${response.status}`);
+      }
+    } catch (error) {
+      setError(error.message);
+    }
+  };
 
   const handleSearch = useCallback(
     (e) => {
@@ -134,7 +158,7 @@ export function Dashboard() {
     },
     [orders]
   );
-console.log(orders);
+  console.log(orders);
 
   return (
     <div className="flex min-h-screen w-full flex-col bg-muted/40">
@@ -203,7 +227,17 @@ console.log(orders);
                           <TableHead className="hidden sm:table-cell">
                             Status
                           </TableHead>
+                          <TableHead className="hidden sm:table-cell">
+                            Products
+                          </TableHead>
+                          <TableHead className="text-right">Payment</TableHead>
+                          <TableHead className="text-right">
+                            Promocode
+                          </TableHead>
+                          <TableHead>Created</TableHead>
+                          <TableHead>Updated</TableHead>
                           <TableHead className="text-right">Amount</TableHead>
+                          <TableHead className="hidden sm:table-cell"></TableHead>
                         </TableRow>
                       </TableHeader>
                       <TableBody>
@@ -225,10 +259,13 @@ console.log(orders);
                                     handleStatusChange(order._id, value)
                                   }
                                 >
-                                  <SelectTrigger className="stocks" id="status">
+                                  <SelectTrigger
+                                    className="stocks border border-[#FACC15]"
+                                    id="status"
+                                  >
                                     <SelectValue placeholder="Select status" />
                                   </SelectTrigger>
-                                  <SelectContent className="stocks">
+                                  <SelectContent className="stocks p-0">
                                     {[
                                       "Fulfilled",
                                       "Declined",
@@ -244,7 +281,7 @@ console.log(orders);
                                   </SelectContent>
                                 </Select>
                               </TableCell>
-                              <TableCell className="text-right">
+                              <TableCell className="text-left">
                                 {order.items
                                   .map(
                                     (i) =>
@@ -266,6 +303,9 @@ console.log(orders);
                               </TableCell>
                               <TableCell className="text-right">
                                 {order.amount}₼
+                              </TableCell>
+                              <TableCell className="text-right">
+                                <TrashIcon className="size-5 text-[#FACC15] hover:text-[#fc3c3c] duration-150" />
                               </TableCell>
                             </TableRow>
                           ))
