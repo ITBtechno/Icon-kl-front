@@ -296,9 +296,7 @@ export function Dashboard() {
                 <Card x-chunk="dashboard-07-chunk-0">
                   <CardHeader>
                     <CardTitle>Product Details</CardTitle>
-                    <CardDescription>
-                      Lipsum dolor sit amet, consectetur adipiscing elit
-                    </CardDescription>
+                    <CardDescription>Change product's details</CardDescription>
                   </CardHeader>
                   <CardContent>
                     <div className="grid gap-6">

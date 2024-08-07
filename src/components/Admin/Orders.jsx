@@ -37,7 +37,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { loginSuccess } from "../../redux/actions/authActions";
 import Aside from "./Aside";
 import HeaderAdmin from "./HeaderAdmin";
-import { BackTop } from "antd";
+import { BackTop, notification } from "antd";
 
 export function Dashboard() {
   const [orders, setOrders] = useState([]);
@@ -46,7 +46,25 @@ export function Dashboard() {
   const [searchTerm, setSearchTerm] = useState("");
   const dispatch = useDispatch();
   const { token } = useSelector((state) => state.auth);
-
+  const [api, contextHolder] = notification.useNotification();
+  const notificationStatusChanged = (type) => {
+    api[type]({
+      message: type,
+      description:
+        type === "success"
+          ? "Order status updated successfully!"
+          : "Order status not updated!",
+    });
+  };
+  const notificationOrderDeleted = (type) => {
+    api[type]({
+      message: type,
+      description:
+        type === "success"
+          ? "Order deleted successfully!"
+          : "Order not deleted!",
+    });
+  };
   useEffect(() => {
     const token = Cookies.get("accessToken");
     if (token) {
@@ -111,8 +129,10 @@ export function Dashboard() {
             order._id === updatedOrder._id ? updatedOrder : order
           )
         );
+        notificationStatusChanged("success");
       } else {
         setError(`HTTP error: ${response.status}`);
+        notificationStatusChanged("error");
       }
     } catch (error) {
       setError(error.message);
@@ -132,14 +152,17 @@ export function Dashboard() {
       );
 
       if (response.ok) {
-        const updatedOrder = await response.json();
-        setOrders((order) => order.filter((x) => x._id !== x.orderId));
-        setFilteredOrders((order) => order.filter((x) => x._id !== x.orderId));
+        setOrders((orders) => orders.filter((order) => order._id !== orderId));
+        setFilteredOrders((orders) =>
+          orders.filter((order) => order._id !== orderId)
+        );
+        notificationOrderDeleted("success");
       } else {
         setError(`HTTP error: ${response.status}`);
+        notificationOrderDeleted("error");
       }
     } catch (error) {
-      setError(error.message);
+      setError(`Network error: ${error.message}`);
     }
   };
 
@@ -165,6 +188,7 @@ export function Dashboard() {
     <div className="flex min-h-screen w-full flex-col bg-muted/40">
       <Aside />
       <BackTop />
+      {contextHolder}
       <div className="flex flex-col sm:gap-4 sm:py-4 sm:pl-14">
         <HeaderAdmin
           searchTerm={searchTerm}
@@ -294,7 +318,7 @@ export function Dashboard() {
                                 {order.paymentMethod}
                               </TableCell>
                               <TableCell className="text-right">
-                                {order?.promocode?.code || "none"}
+                                {order?.promocode?.code || `—`}
                               </TableCell>
                               <TableCell className="text-sm">
                                 {new Date(order.createdAt).toLocaleString()}
@@ -303,10 +327,13 @@ export function Dashboard() {
                                 {new Date(order.updatedAt).toLocaleString()}
                               </TableCell>
                               <TableCell className="text-right">
-                                {order.amount}₼
+                                {order?.amount.toFixed(2)}₼
                               </TableCell>
                               <TableCell className="text-right">
-                                <TrashIcon className="size-5 text-[#FACC15] hover:text-[#fc3c3c] duration-150" />
+                                <TrashIcon
+                                  className="size-5 text-[#FACC15] hover:text-[#fc3c3c] duration-150"
+                                  onClick={() => handleDeleteOrder(order._id)}
+                                />
                               </TableCell>
                             </TableRow>
                           ))

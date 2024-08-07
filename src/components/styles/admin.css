@@ -253,3 +253,8 @@ a {
   inset-inline-end: 30px;
   inset-block-end: 25px;
 }
+:where(.css-dev-only-do-not-override-1uq9j6g).ant-select-multiple
+  .ant-select-selection-placeholder {
+  background-color: transparent !important;
+  color: #6e6e6e !important;
+}

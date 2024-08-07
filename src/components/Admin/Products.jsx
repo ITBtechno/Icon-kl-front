@@ -12,7 +12,7 @@ import {
   Users2,
 } from "lucide-react";
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 import { Badge } from "@/components/ui/badge";
 import {
@@ -62,7 +62,7 @@ export function Dashboard() {
   const { token } = useSelector((state) => state.auth);
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
-
+  const navigate = useNavigate();
   const [api, contextHolder] = notification.useNotification();
   const openNotificationWithIcon = (type) => {
     api[type]({
@@ -222,13 +222,24 @@ export function Dashboard() {
                         filteredProducts.map((product) => (
                           <TableRow key={product._id}>
                             <TableCell className="hidden sm:table-cell">
-                              <img
-                                alt="Product image"
-                                className="aspect-square rounded-md object-cover"
-                                height="64"
-                                src={product.image}
-                                width="64"
-                              />
+                              {product.image ? (
+                                <img
+                                  alt="Product image"
+                                  className="aspect-square rounded-md object-cover"
+                                  height="64"
+                                  src={product.image}
+                                  width="64"
+                                />
+                              ) : (
+                                <p
+                                  className="text-[#FACC15] select-none hover:text-[#ffbf00]"
+                                  onClick={() =>
+                                    navigate(`/admin/${product._id}/edit`)
+                                  }
+                                >
+                                  Add image
+                                </p>
+                              )}
                             </TableCell>
                             <TableCell className="font-medium">
                               {product.name}
@@ -239,13 +250,13 @@ export function Dashboard() {
                               </Badge>
                             </TableCell>
                             <TableCell className="hidden md:table-cell">
-                              {product.price}
+                              {product?.price.toFixed(2)}₼
                             </TableCell>
                             <TableCell className="hidden md:table-cell">
                               {product.ingredients &&
                               product.ingredients.length > 0
                                 ? product.ingredients.join(", ")
-                                : null}
+                                : `—`}
                             </TableCell>
                             <TableCell>
                               <DropdownMenu>
