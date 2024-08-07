@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Home,
   LineChart,
@@ -30,8 +30,31 @@ import {
 import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import "./../styles/admin.css";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faArrowLeft,
+  faLayerGroup,
+  faRightFromBracket,
+} from "@fortawesome/free-solid-svg-icons";
+import Cookies from "js-cookie";
+import { useDispatch, useSelector } from "react-redux";
+import { logout } from "../../redux/actions/authActions";
 
-function HeaderAdmin({ searchTerm, handleSearch, name }) {
+function HeaderAdmin({ searchTerm, handleSearch }) {
+  const [userName, setUserName] = useState("");
+  const [userGender, setUserGender] = useState("");
+  const dispatch = useDispatch();
+  const token = useSelector((state) => state.auth.token);
+  const name = useSelector((state) => state.auth.fullname);
+
+  const handleLogout = () => {
+    dispatch(logout());
+    setUserName("");
+    setUserGender("");
+    Cookies.remove("userFullName");
+    navigate("/");
+  };
+
   return (
     <header className="sticky top-0 z-30 flex h-14 items-center gap-4 border-b bg-background px-4 sm:static sm:h-auto sm:border-0 sm:bg-transparent sm:px-6">
       <Sheet>
@@ -44,35 +67,35 @@ function HeaderAdmin({ searchTerm, handleSearch, name }) {
         <SheetContent side="left" className="sm:max-w-xs">
           <nav className="grid gap-6 text-lg font-medium">
             <Link
-              href="#"
-              className="group flex h-10 w-10 shrink-0 items-center justify-center gap-2 rounded-full bg-primary text-lg font-semibold text-primary-foreground md:text-base"
-            >
-              <Package2 className="h-5 w-5 transition-all group-hover:scale-110" />
-              <span className="sr-only">Acme Inc</span>
-            </Link>
-            <Link
-              href="#"
+              to="/"
               className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground"
             >
-              <Home className="h-5 w-5" />
-              Dashboard
+              <FontAwesomeIcon icon={faArrowLeft} />
+              Back to home
             </Link>
             <Link
-              href="#"
+              to="/admin/orders"
               className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground"
             >
               <ShoppingCart className="h-5 w-5" />
               Orders
             </Link>
             <Link
-              href="#"
+              to="/admin/products"
               className="flex items-center gap-4 px-2.5 text-foreground"
             >
               <Package className="h-5 w-5" />
               Products
             </Link>
             <Link
-              href="#"
+              to="/admin/category"
+              className="flex items-center gap-4 px-2.5 text-foreground"
+            >
+              <FontAwesomeIcon className="h-5 w-5" icon={faLayerGroup} />
+              Categories
+            </Link>
+            <Link
+              to="/admin/customers"
               className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground"
             >
               <Users2 className="h-5 w-5" />
@@ -81,32 +104,14 @@ function HeaderAdmin({ searchTerm, handleSearch, name }) {
             <Link
               href="#"
               className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground"
+              onClick={handleLogout}
             >
-              <LineChart className="h-5 w-5" />
-              Settings
+              <FontAwesomeIcon className="h-5 w-5" icon={faRightFromBracket} />
+              Log out
             </Link>
           </nav>
         </SheetContent>
       </Sheet>
-      <Breadcrumb className="hidden md:flex">
-        <BreadcrumbList id="breadcrumb">
-          <BreadcrumbItem>
-            <BreadcrumbLink asChild>
-              <Link href="#">Dashboard</Link>
-            </BreadcrumbLink>
-          </BreadcrumbItem>
-          <BreadcrumbSeparator />
-          <BreadcrumbItem>
-            <BreadcrumbLink asChild>
-              <Link href="#">{name}</Link>
-            </BreadcrumbLink>
-          </BreadcrumbItem>
-          <BreadcrumbSeparator />
-          <BreadcrumbItem>
-            <BreadcrumbPage id="page">All {name}</BreadcrumbPage>
-          </BreadcrumbItem>
-        </BreadcrumbList>
-      </Breadcrumb>
       <div className="relative ml-auto flex-1 md:grow-0">
         <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
         <Input
@@ -118,28 +123,13 @@ function HeaderAdmin({ searchTerm, handleSearch, name }) {
         />
       </div>
       <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button
-            variant="outline"
-            size="icon"
-            className="overflow-hidden rounded-full"
-          >
-            <img
-              src="/assets/profile-user.png"
-              width={36}
-              height={30}
-              alt="Avatar"
-              className="overflow-hidden rounded-full"
-            />
-          </Button>
-        </DropdownMenuTrigger>
         <DropdownMenuContent align="end" id="account">
           <DropdownMenuLabel id="myAccount">My Account</DropdownMenuLabel>
           <DropdownMenuSeparator />
           <DropdownMenuItem>Settings</DropdownMenuItem>
           <DropdownMenuItem>Support</DropdownMenuItem>
           <DropdownMenuSeparator />
-          <DropdownMenuItem>Logout</DropdownMenuItem>
+          <DropdownMenuItem onClick={handleLogout}>Logout</DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
     </header>
