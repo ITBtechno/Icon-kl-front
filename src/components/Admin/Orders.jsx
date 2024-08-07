@@ -143,11 +143,10 @@ export function Dashboard() {
     }
   };
 
-  const handleSearch = useCallback(
-    (e) => {
-      const searchTerm = e.target.value;
-      setSearchTerm(searchTerm);
-
+  useEffect(() => {
+    if (searchTerm === "") {
+      setFilteredOrders(orders);
+    } else {
       const lowercasedSearchTerm = searchTerm.toLowerCase();
       const filtered = orders.filter((order) =>
         order.orderByUserId.fullname
@@ -155,10 +154,12 @@ export function Dashboard() {
           .includes(lowercasedSearchTerm)
       );
       setFilteredOrders(filtered);
-    },
-    [orders]
-  );
-  console.log(orders);
+    }
+  }, [searchTerm, orders]);
+
+  const handleSearch = useCallback((e) => {
+    setSearchTerm(e.target.value);
+  }, []);
 
   return (
     <div className="flex min-h-screen w-full flex-col bg-muted/40">

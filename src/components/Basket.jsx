@@ -8,6 +8,8 @@ import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import axios from "axios";
 import { Helmet } from "react-helmet";
+import { loginSuccess } from "../redux/actions/authActions";
+import Cookies from "js-cookie";
 
 export default function Basket() {
   const [isModalOpen, setModalOpen] = useState(false);
@@ -16,17 +18,14 @@ export default function Basket() {
   const [phoneValue, setPhoneValue] = useState("");
   const [paymentMethod, setPaymentMethod] = useState("cash");
   const theOrders = useSelector((state) => state.orders);
-  console.log(theOrders);
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
+  const userId = useSelector((state) => state.auth.userId);
+  const { token } = useSelector((state) => state.auth);
 
   let totalPrice = 0;
   const dispatch = useDispatch();
 
   const handleIncrement = (id) => {
-    // if (!isAuthenticated) {
-    //   alert("Lütfen sipariş vermek için giriş yapın.");
-    //   return;
-    // }
     dispatch({
       type: "INCREMENT_COUNT",
       payload: { _id: id },
@@ -43,6 +42,13 @@ export default function Basket() {
   const handleRemoveFromBasket = (id) => {
     dispatch({ type: "REMOVE_FROM_ORDERS", payload: id });
   };
+
+  useEffect(() => {
+    const token = Cookies.get("accessToken");
+    if (token) {
+      dispatch(loginSuccess(token));
+    }
+  }, [dispatch]);
 
   const openModal = () => {
     setModalOpen(true);
@@ -99,45 +105,32 @@ export default function Basket() {
         "https://icon-kl-back.onrender.com/api/otp/send",
         { countryCode, phoneNumber }
       );
-      console.log("Response:", response);
       if (response.status === 200) {
-        console.log("Phone submitted successfully");
         setModal2Open(false);
         setModal2OpenNext(true);
-        console.log(phoneValue);
       }
     } catch (error) {
       console.error("Error sending OTP", error);
     }
-
-    console.log("Country Code:", countryCode);
-    console.log("Phone Number:", phoneNumber);
   };
+
   const handleSubmitEmail = async (e) => {
     e.preventDefault();
     const email = e.target.email.value;
     try {
-      const response = await fetch(
+      const response = await axios.post(
         "https://icon-kl-back.onrender.com/api/otp/send",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ email }),
-        }
+        { email }
       );
-      if (response.ok) {
-        console.log("Email submitted successfully");
+      if (response.status === 200) {
         setModal2Open(false);
         openVerifyModal(email);
-      } else {
-        console.error("Error submitting email");
       }
     } catch (error) {
       console.error("Error:", error);
     }
   };
+
   const modalRef1 = useRef();
   const modalRef2 = useRef();
 
@@ -158,35 +151,68 @@ export default function Basket() {
     };
   }, []);
 
-  const handleWhatsAppOrder = () => {
+  const handleOrderSubmit = async () => {
     if (!isAuthenticated) {
-      alert("Lütfen sipariş vermek için giriş yapın.");
+      alert("Sifariş vermək üçün giriş edin.");
       return;
     }
 
-    const orderDetails = theOrders
-      .map((order, index) => {
-        return `${index + 1}. ${order.name} - ${order.count} ədəd, ${
-          order.price * order.count
-        } AZN`;
-      })
-      .join("\n");
+    const orderItems = theOrders.map((order) => ({
+      itemId: order._id,
+      itemCount: order.count,
+    }));
 
-    let paymentText;
-    if (paymentMethod === "cash") {
-      paymentText = "Nagd ödəniş";
-    } else {
-      paymentText = "Kredit kartı ilə ödəniş";
+    const orderData = {
+      amount: totalPrice,
+      items: orderItems,
+      paymentMethod: paymentMethod,
+      orderByUserId: userId,
+    };
+
+    try {
+      const response = await fetch(
+        "https://icon-kl-back.onrender.com/api/orders/",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(orderData),
+        }
+      );
+
+      if (response.ok) {
+        console.log("Order placed successfully");
+        setBasketModalOpen(false);
+
+        const orderDetails = theOrders
+          .map(
+            (order, index) =>
+              `${index + 1}. ${order.name} - ${order.count} ədəd, ${
+                order.price * order.count
+              } AZN`
+          )
+          .join("\n");
+
+        const paymentText =
+          paymentMethod === "cash" ? "Nagd ödəniş" : "Kredit kartı ilə ödəniş";
+
+        const message = `Sifarişlər:\n${orderDetails}\nÖdəniş: ${paymentText}\nCəm: ${totalPrice} AZN`;
+
+        alert(message);
+      } else {
+        console.error("Error placing order:", response.statusText);
+        alert(
+          "Sifarişinizi yerləşdirməkdə problem yaşandı. Xahiş edirik yenidən cəhd edin."
+        );
+      }
+    } catch (error) {
+      console.error("Error placing order:", error);
+      alert(
+        "Sifarişinizi yerləşdirməkdə problem yaşandı. Xahiş edirik yenidən cəhd edin."
+      );
     }
-
-    let message = `Sifarişlər:\n${orderDetails}\nÖdəniş: ${paymentText}\nCəm: ${totalPrice} AZN`;
-
-    const encodedMessage = encodeURIComponent(message);
-
-    const whatsappLink = `https://api.whatsapp.com/send/?phone=%2B994553532243&text=${encodedMessage}`;
-
-    window.open(whatsappLink, "_blank");
-    setBasketModalOpen(false);
   };
 
   const { t, i18n } = useTranslation();
@@ -315,7 +341,11 @@ export default function Basket() {
           {theOrders.length === 0 ? (
             <div className="empty-basket">
               <div id="empty">
-                <img className="empty" src="./assets/cart.fill (2).png" alt="cart" />
+                <img
+                  className="empty"
+                  src="./assets/cart.fill (2).png"
+                  alt="cart"
+                />
                 <div className="texts">
                   <div id="emptyText">{t("pls")}</div>
                   <div id="emptyText">{t("add product")}</div>
@@ -376,7 +406,10 @@ export default function Basket() {
                                     handleRemoveFromBasket(order._id)
                                   }
                                 >
-                                  <img src="./assets/trash-icon.png" alt="remove" />
+                                  <img
+                                    src="./assets/trash-icon.png"
+                                    alt="remove"
+                                  />
                                 </button>
                               )}
                             </button>
@@ -401,7 +434,7 @@ export default function Basket() {
                       </div>
                       <div className="icons">
                         <button className="faPen">
-                          <FontAwesomeIcon icon={faPen} />
+                          {/* <FontAwesomeIcon icon={faPen} /> */}
                         </button>
                         <button
                           className="remove"
@@ -471,11 +504,7 @@ export default function Basket() {
               <div className="totalPrice">
                 {t("total price")} <b>{totalPrice} ₼</b>{" "}
               </div>
-              <button
-                className="wp-order-disabled"
-                onClick={handleWhatsAppOrder}
-                disabled
-              >
+              <button className="wp-order" onClick={handleOrderSubmit}>
                 {t("order")}
               </button>
             </div>
@@ -524,7 +553,7 @@ export default function Basket() {
               <div className="totalPrice">
                 {t("total price")} <b>{totalPrice} ₼</b>{" "}
               </div>
-              <button className="wp-order" onClick={handleWhatsAppOrder}>
+              <button className="wp-order" onClick={handleOrderSubmit}>
                 {t("order")}
               </button>
             </div>
@@ -575,24 +604,6 @@ export default function Basket() {
             </button>
             <div className="modal_info2">
               <div className="choice2">Giriş et</div>
-              {/* <form onSubmit={handlePhoneSubmit}>
-                <PhoneInput
-                  className="phoneInput"
-                  international
-                  countryCallingCodeEditable={false}
-                  defaultCountry="AZ"
-                  value={phoneValue}
-                  onChange={setPhoneValue}
-                />
-                <p className="phoneNumber">
-                  Telefon nömrənizi doğrulamaq üçün kod göndərəcəyik
-                </p>
-                <div className="continue">
-                  <button className="continueBtn" type="submit">
-                    Davam et
-                  </button>
-                </div>
-              </form> */}
               <form onSubmit={handleSubmitEmail}>
                 <input
                   type="email"
@@ -659,10 +670,8 @@ export default function Basket() {
               {t("total price")}
               <b>{totalPrice} ₼</b>{" "}
             </div>
-            <button className="wp-order" onClick={handleWhatsAppOrder}>
+            <button className="wp-order" onClick={handleOrderSubmit}>
               {t("order")}
-
-              {t("add to basket")}
             </button>
           </div>
         </div>
