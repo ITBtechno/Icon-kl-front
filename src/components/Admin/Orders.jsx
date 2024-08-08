@@ -308,7 +308,7 @@ export function Dashboard() {
                                 {order.paymentMethod}
                               </TableCell>
                               <TableCell className="text-right">
-                                {order?.promocode?.code || `—`}
+                                {order?.promocodeId?.code || `—`}
                               </TableCell>
                               <TableCell className="text-sm">
                                 {new Date(order.createdAt).toLocaleString()}
