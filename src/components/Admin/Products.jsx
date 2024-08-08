@@ -224,7 +224,7 @@ export function Dashboard() {
                                 />
                               ) : (
                                 <p
-                                  className="text-[#FACC15] select-none hover:text-[#ffbf00]"
+                                  className="text-[#FACC15] select-none hover:text-[#ffc423] cursor-pointer"
                                   onClick={() =>
                                     navigate(`/admin/${product._id}/edit`)
                                   }
@@ -291,12 +291,6 @@ export function Dashboard() {
                     </TableBody>
                   </Table>
                 </CardContent>
-                {/* <CardFooter>
-                  <div className="text-xs text-muted-foreground">
-                    Showing <strong>1-10</strong> of <strong>32</strong>{" "}
-                    products
-                  </div>
-                </CardFooter> */}
               </Card>
             </TabsContent>
           </Tabs>

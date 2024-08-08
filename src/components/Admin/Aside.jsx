@@ -39,7 +39,7 @@ function Aside() {
             <TooltipTrigger asChild>
               <Link
                 to="/"
-                className="group flex h-9 w-9 shrink-0 items-center justify-center gap-2 rounded-full bg-primary text-lg font-semibold text-primary-foreground md:h-8 md:w-8 md:text-base"
+                className="group flex h-9 w-9 shrink-0 items-center justify-center gap-2 rounded-full bg-primary text-lg font-semibold text-primary-foreground md:h-8 md:w-8 md:text-base hover:bg-[#ffc423] duration-150"
               >
                 <FontAwesomeIcon icon={faArrowLeft} />
                 <span className="sr-only">Back to home</span>

@@ -354,7 +354,7 @@ export function Dashboard() {
       {isModalCategory && (
         <div id="myModal" className={`modalCategory`}>
           <div className="modal-contentC">
-            <button className="close2" onClick={closeModalCategory}>
+            <button className="close2 m-1" onClick={closeModalCategory}>
               &times;
             </button>
             <div className="modal_infoC">
@@ -397,7 +397,7 @@ export function Dashboard() {
       {isModalCategoryAdd && (
         <div id="myModal" className={`modalCategory`}>
           <div className="modal-contentC">
-            <button className="close2" onClick={closeModalCategoryAdd}>
+            <button className="close2 m-1" onClick={closeModalCategoryAdd}>
               &times;
             </button>
             <div className="modal_infoC">
