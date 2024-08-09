@@ -299,13 +299,8 @@ hr {
 }
 .basket2 {
   color: #d9b852;
-  width: 60px;
-  height: 40px;
-  position: fixed;
-  right: 20px;
-  bottom: 40px;
-  z-index: 102;
 }
+
 
 .food {
   display: flex;
