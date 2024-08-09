@@ -960,4 +960,8 @@ hr {
     border-radius: 12px;
     color: hsl(0, 0%, 100%);
   }
+
+  .namePrice {
+    margin-top: 45px;
+  }
 }

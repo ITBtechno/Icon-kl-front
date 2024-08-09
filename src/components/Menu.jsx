@@ -38,10 +38,12 @@ export default function Menu() {
   const [tabButtonStatus, setTabButtonStatus] = useState(false);
   const [items, setItems] = useState([]);
   const [activeProduct, setActiveProduct] = useState(null);
+  const [totalPrice, setTotalPrice] = useState(0);
 
-  const handleAddToCartFromSearchList = (product) => {
-    dispatch(addToOrder({ ...product, count: 1 }));
-    setCountNumber(1);
+  const handleAddToCartFromSearchList = (meal) => {
+    dispatch(addToOrder({ ...meal, count: 1 }));
+    setInput("");
+    setSearchListVisible(false);
   };
 
   const [categories, setCategories] = useState([]);
@@ -104,6 +106,7 @@ export default function Menu() {
     setModalPrdctOpen(false);
     setActiveProduct(null);
   };
+
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (modalRef.current && !modalRef.current.contains(event.target)) {
@@ -139,7 +142,7 @@ export default function Menu() {
 
   const toggleExpanded = () => {
     setExpanded(!expanded);
-    setSearchListVisible(!isSearchListVisible);
+    setSearchListVisible(input.length > 0);
   };
 
   const handleClickOutside = (event) => {};
@@ -299,13 +302,25 @@ export default function Menu() {
 
   const handleIncrement = () => {
     setCountNumber(countNumber + 1);
+    if (activeProduct) {
+      setTotalPrice((countNumber + 1) * activeProduct.price);
+    }
   };
 
   const handleDecrement = () => {
     if (countNumber > 1) {
       setCountNumber(countNumber - 1);
+      if (activeProduct) {
+        setTotalPrice((countNumber - 1) * activeProduct.price);
+      }
     }
   };
+
+  useEffect(() => {
+    if (activeProduct) {
+      setTotalPrice(countNumber * activeProduct.price);
+    }
+  }, [activeProduct, countNumber]);
 
   const handleAddToCart = () => {
     if (activeProduct) {
@@ -409,8 +424,13 @@ export default function Menu() {
                   className="input-search"
                   placeholder={t("search")}
                   value={input}
-                  onChange={(e) => setInput(e.target.value)}
+                  onChange={(e) => {
+                    setInput(e.target.value);
+                    setSearchListVisible(e.target.value.length > 0);
+                  }}
                   onKeyUp={handleKeyUp}
+                  onBlur={() => setSearchListVisible(false)}
+                  onFocus={() => setSearchListVisible(input.length > 0)}
                 />
               </div>
 
@@ -438,13 +458,13 @@ export default function Menu() {
                 ))}
               </div>
             </div>
-            <button onClick={open4Modal}>
+            {/* <button onClick={open4Modal}>
               <img
                 className="filter-icon"
                 src="./assets/align-right.png"
                 alt="filter"
               />
-            </button>
+            </button> */}
           </div>
           <motion.hr
             className="hr"
@@ -550,8 +570,8 @@ export default function Menu() {
                       </div>
                     ) : (
                       <img
-                        className="noImage"
-                        src={"./assets/uil_restaurant.png"}
+                        className="foodImg"
+                        src={"./assets/foodImg.png"}
                         alt={items.name}
                       />
                     )}
@@ -634,9 +654,9 @@ export default function Menu() {
                     />
                   ) : (
                     <img
-                      className="productImg"
+                      className="noImage"
                       src={"./assets/uil_restaurant.png"}
-                      alt={activeProduct ? activeProduct.name : "Product"}
+                      alt={activeProduct.name}
                     />
                   )}
                   <div className="basket-main">
@@ -647,13 +667,16 @@ export default function Menu() {
                     )}
 
                     <div className="modal-description">
-                      Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                      Iure.
+                      {activeProduct &&
+                      activeProduct.ingredients &&
+                      activeProduct.ingredients.length > 0
+                        ? activeProduct.ingredients.join(", ")
+                        : "Lorem ipsum dolor sit amet consectetur adipisicing elit. Iure."}
                     </div>
                     {activeProduct && activeProduct.price && (
-                      <div className="modal-price">{activeProduct.price} ₼</div>
+                      <div className="modal-price">{totalPrice} ₼</div>
                     )}
-                    <div className="modal-ps">{t("no extra adds")}</div>
+                    {/* <div className="modal-ps">{t("no extra adds")}</div> */}
                     <div className="counter">
                       {activeProduct && (
                         <div className="counter-main">
@@ -687,7 +710,7 @@ export default function Menu() {
         </div>
       )}
 
-      {isModal4Open && (
+      {/* {isModal4Open && (
         <div id="myModal" className="modal">
           <div className="modal-content4" ref={filterModalRef}>
             <span className="close-filter" onClick={close4Modal}>
@@ -817,7 +840,7 @@ export default function Menu() {
             </div>
           </div>
         </div>
-      )}
+      )} */}
     </div>
   );
 }

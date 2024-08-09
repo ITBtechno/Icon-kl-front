@@ -21,6 +21,9 @@ export default function Basket() {
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
   const userId = useSelector((state) => state.auth.userId);
   const { token } = useSelector((state) => state.auth);
+  const [promoCode, setPromoCode] = useState("");
+  const [isPromoCodeValid, setIsPromoCodeValid] = useState(false);
+  const [promoCodeError, setPromoCodeError] = useState("");
 
   let totalPrice = 0;
   const dispatch = useDispatch();
@@ -151,9 +154,53 @@ export default function Basket() {
     };
   }, []);
 
+  const applyPromoCode = async () => {
+    if (!promoCode) {
+      alert("Promo kodu daxil edin.");
+      return;
+    }
+
+    try {
+      const response = await fetch(
+        "https://icon-kl-back.onrender.com/api/promocodes/validate",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ promoCode }),
+        }
+      );
+
+      if (response.ok) {
+        const data = await response.json();
+        setIsPromoCodeValid(true);
+        setPromoCodeError("");
+        alert("Promo kodu tətbiq edildi!");
+      } else {
+        const errorData = await response.json();
+        setIsPromoCodeValid(false);
+        setPromoCodeError(
+          errorData.message ||
+            "Promo kodu tətbiq edilmədi. Xahiş edirik, kodu yoxlayın."
+        );
+        console.error("Xəta:", errorData);
+      }
+    } catch (error) {
+      console.error("Promo kodunu tətbiq edərkən xəta baş verdi:", error);
+      alert("Promo kodunu tətbiq edərkən xəta baş verdi.");
+    }
+  };
+
   const handleOrderSubmit = async () => {
     if (!isAuthenticated) {
       alert("Sifariş vermək üçün giriş edin.");
+      return;
+    }
+
+    if (promoCode && !isPromoCodeValid) {
+      alert("Promo kodu təsdiqlənmədi. Sifarişi göndərə bilmirsiniz.");
       return;
     }
 
@@ -167,11 +214,18 @@ export default function Basket() {
       items: orderItems,
       paymentMethod: paymentMethod,
       orderByUserId: userId,
+      promocode: promoCode
+        ? [
+            {
+              code: promoCode,
+            },
+          ]
+        : [],
     };
 
     try {
       const response = await fetch(
-        "https://icon-kl-back.onrender.com/api/orders/",
+        "https://icon-karaoke-and-lounge-back.onrender.com/api/orders",
         {
           method: "POST",
           headers: {
@@ -388,7 +442,9 @@ export default function Basket() {
                         <div className="item-details">
                           <p className="item-name">{foundProduct.name}</p>
                           <span className="description2">
-                            Lorem ipsum dolor sit amet.
+                            {order.ingredients && order.ingredients.length > 0
+                              ? order.ingredients.join(", ")
+                              : "-"}
                           </span>
                         </div>
                         <div className="counter">
@@ -464,8 +520,14 @@ export default function Basket() {
                 type="text"
                 placeholder={t("p-code")}
                 disabled
+                value={promoCode}
+                onChange={(e) => setPromoCode(e.target.value)}
               ></input>
-              <button className="promoButton-disabled" disabled>
+              <button
+                onClick={applyPromoCode}
+                className="promoButton-disabled"
+                disabled
+              >
                 {t("apply")}
               </button>
             </div>
@@ -517,8 +579,13 @@ export default function Basket() {
                 className="code"
                 type="text"
                 placeholder={t("p-code")}
+                value={promoCode}
+                onChange={(e) => setPromoCode(e.target.value)}
               ></input>
-              <button className="promoButton"> {t("apply")}</button>
+              <button onClick={applyPromoCode} className="promoButton">
+                {" "}
+                {t("apply")}
+              </button>
             </div>
             <div className="pay">
               <p className="method">{t("select a payment method")}</p>
