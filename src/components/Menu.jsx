@@ -1,31 +1,24 @@
 import React, { useEffect, useRef, useState } from "react";
-import "./styles/Menu.css";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import "rsuite/dist/rsuite.css";
-import { FreeMode, Keyboard, Mousewheel } from "swiper/modules";
-import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import "swiper/css/free-mode";
 import "swiper/css/pagination";
-import OutlinedInput from "@mui/material/OutlinedInput";
-import InputLabel from "@mui/material/InputLabel";
-import MenuItem from "@mui/material/MenuItem";
-import FormControl from "@mui/material/FormControl";
-import Select from "@mui/material/Select";
+import { FreeMode, Keyboard, Mousewheel } from "swiper/modules";
+import { Swiper, SwiperSlide } from "swiper/react";
+import "./styles/Menu.css";
 
-import { useDispatch } from "react-redux";
-import { Pagination, Stack } from "@mui/material";
-import {
-  incrementCount,
-  decrementCount,
-  addToOrder,
-} from "./../redux/actions/action";
-import { motion } from "framer-motion";
 import { faCartShopping } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { ArrowBack, HomeRounded } from "@mui/icons-material";
+import { Pagination, Stack } from "@mui/material";
+import { motion } from "framer-motion";
 import debounce from "lodash.debounce";
-import { useTranslation } from "react-i18next";
 import { Helmet } from "react-helmet";
+import { useTranslation } from "react-i18next";
+import { useDispatch } from "react-redux";
+import { addToOrder } from "./../redux/actions/action";
+import { HomeIcon } from "lucide-react";
 
 export default function Menu() {
   const [input, setInput] = useState("");
@@ -39,7 +32,7 @@ export default function Menu() {
   const [items, setItems] = useState([]);
   const [activeProduct, setActiveProduct] = useState(null);
   const [totalPrice, setTotalPrice] = useState(0);
-
+  const navigate = useNavigate();
   const handleAddToCartFromSearchList = (meal) => {
     dispatch(addToOrder({ ...meal, count: 1 }));
     setInput("");
@@ -618,10 +611,18 @@ export default function Menu() {
         </Stack>
       </div>
 
-      <div>
+      <div className="flex !justify-between !items-center">
+        <HomeRounded
+          className="text-[#D9B852] !text-7xl homeicon"
+          onClick={() => navigate("/")}
+        />
         <Link to="/basket">
-          <div className="basket2">
-            <img src="./assets/shopping-cart.png" alt="cart" />
+          <div className="basket2 w-16 h-14">
+            <img
+              src="./assets/shopping-cart.png"
+              alt="cart"
+              className="w-14 h-14"
+            />
           </div>
         </Link>
       </div>
