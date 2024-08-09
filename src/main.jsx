@@ -2,8 +2,7 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import App from "./App.jsx";
 import { Provider } from "react-redux";
-import { PersistGate } from "redux-persist/integration/react";
-import { store, persistor } from "./redux/store/store.js";
+import { store } from "./redux/store/store.js";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Basket from "./components/Basket.jsx";
 import Menu from "./components/Menu.jsx";
@@ -16,6 +15,8 @@ import PrivateRoute from "./routes/PrivateRouter.jsx";
 import AddProduct from "./components/Admin/AddProduct.jsx";
 import Category from "./components/Admin/Category.jsx";
 import NotFound from "./components/NotFound.jsx";
+import Promocodes from "./components/Admin/Promocodes.jsx";
+import AddPromocode from "./components/Admin/AddPromocode.jsx";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <Provider store={store}>
@@ -29,8 +30,10 @@ ReactDOM.createRoot(document.getElementById("root")).render(
           <Route path="/admin/customers" element={<Customers />} />
           <Route path="/admin/products" element={<Products />} />
           <Route path="/admin/category" element={<Category />} />
+          <Route path="/admin/promocodes" element={<Promocodes />} />
           <Route path="/admin/:productId/edit" element={<EditProduct />} />
           <Route path="/admin/addProduct" element={<AddProduct />} />
+          <Route path="/admin/addPromocode" element={<AddPromocode />} />
         </Route>
         <Route path="*" element={<NotFound />} />
       </Routes>

@@ -48,6 +48,7 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { TbCategoryPlus } from "react-icons/tb";
 import { RiDiscountPercentLine } from "react-icons/ri";
+import { DatePicker, Space } from "antd";
 
 export function Dashboard({ handleLogout }) {
   const [formData, setFormData] = useState({
@@ -62,6 +63,11 @@ export function Dashboard({ handleLogout }) {
   const { token } = useSelector((state) => state.auth);
 
   const [api, contextHolder] = notification.useNotification();
+
+  const onChange = (date, dateString) => {
+    console.log(date, dateString);
+  };
+
   const openNotificationWithIcon = (type) => {
     api[type]({
       message: type,
@@ -242,14 +248,14 @@ export function Dashboard({ handleLogout }) {
                 </Link>
               </Button>
               <h1 className="flex-1 shrink-0 whitespace-nowrap text-xl font-semibold tracking-tight sm:grow-0">
-                Add Product
+                Add Promocode
               </h1>
               <div className="hidden items-center gap-2 md:ml-auto md:flex">
                 {/* <Button variant="outline" size="sm" id="discardBtn">
-                  Discard
-                </Button> */}
+                    Discard
+                  </Button> */}
                 <Button size="sm" type="submit" onClick={handleSubmit}>
-                  Add Product
+                  Add Promocode
                 </Button>
               </div>
             </div>
@@ -257,12 +263,12 @@ export function Dashboard({ handleLogout }) {
               <div className="grid auto-rows-max items-start gap-4 lg:col-span-2 lg:gap-8">
                 <Card x-chunk="dashboard-07-chunk-0">
                   <CardHeader>
-                    <CardTitle>Product Details</CardTitle>
+                    <CardTitle>Promocode Details</CardTitle>
                   </CardHeader>
                   <CardContent>
                     <div className="grid gap-6">
                       <div className="grid gap-3">
-                        <Label htmlFor="name">Name</Label>
+                        <Label htmlFor="name">Code</Label>
                         <Input
                           type="text"
                           id="name"
@@ -273,17 +279,18 @@ export function Dashboard({ handleLogout }) {
                         />
                       </div>
                       <div className="grid gap-3">
-                        <Label htmlFor="ingredients">Ingredients</Label>
-                        <AntdSelect
-                          mode="tags"
-                          style={{ width: "100%" }}
-                          placeholder="Enter ingredients"
-                          onChange={handleIngredientChange}
-                          value={formData.ingredients}
+                        <Label htmlFor="price">Discount</Label>
+                        <Input
+                          type="number"
+                          id="price"
+                          name="price"
+                          value={formData.price}
+                          onChange={handleChange}
+                          required
                         />
                       </div>
                       <div className="grid gap-3">
-                        <Label htmlFor="price">Price</Label>
+                        <Label htmlFor="price">Limit</Label>
                         <Input
                           type="number"
                           id="price"
@@ -303,60 +310,23 @@ export function Dashboard({ handleLogout }) {
                   x-chunk="dashboard-07-chunk-4"
                 >
                   <CardHeader>
-                    <CardTitle>Product Image</CardTitle>
-                    {/* <CardDescription>
-                      Lipsum dolor sit amet, consectetur adipiscing elit
-                    </CardDescription> */}
+                    <CardTitle>Expiration Date</CardTitle>
                   </CardHeader>
                   <CardContent>
                     <div className="grid gap-2 relative">
-                      {selectedImage && (
-                        <div className="aspect-square w-full rounded-md overflow-hidden">
-                          <img
-                            src={selectedImage}
-                            alt="Product image"
-                            className="w-full h-full object-cover"
-                          />
-                          <button
-                            type="button"
-                            onClick={handleDeleteImage}
-                            className="absolute bottom-0 right-0 m-2 p-1 bg-red-500 text-white rounded-md hover:bg-red-600 focus:outline-none"
-                          >
-                            Delete
-                          </button>
-                        </div>
-                      )}
-                      {!selectedImage && (
-                        <form className="upload">
-                          <label
-                            htmlFor="files"
-                            className="grid grid-cols-3 gap-2"
-                          >
-                            <button
-                              type="button"
-                              onClick={() =>
-                                document.getElementById("files").click()
-                              }
-                              className="flex aspect-square w-11 items-center justify-center rounded-md border border-dashed"
-                            >
-                              <Upload className="h-4 w-4 text-muted-foreground" />
-                              <span className="sr-only">Upload</span>
-                            </button>
-                            <input
-                              type="file"
-                              id="files"
-                              className="hidden"
-                              multiple
-                              required
-                              onChange={handleFileChange}
-                            />
-                          </label>
-                        </form>
-                      )}
+                      <Label>Select date</Label>
+                      <Space className="space" direction="vertical" size={12}>
+                        <DatePicker
+                          className="date"
+                          renderExtraFooter={() => ""}
+                          showTime
+                          placeholder="Select date"
+                        />
+                      </Space>
                     </div>
                   </CardContent>
                 </Card>
-                <Card x-chunk="dashboard-07-chunk-2">
+                {/* <Card x-chunk="dashboard-07-chunk-2">
                   <CardHeader>
                     <CardTitle>Product Category</CardTitle>
                   </CardHeader>
@@ -390,7 +360,7 @@ export function Dashboard({ handleLogout }) {
                       </div>
                     </div>
                   </CardContent>
-                </Card>
+                </Card> */}
               </div>
             </div>
             <div className="flex items-center justify-center gap-2 md:hidden">

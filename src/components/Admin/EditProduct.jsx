@@ -41,7 +41,15 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Select as AntdSelect, notification } from "antd";
 import { useSelector } from "react-redux";
 import Aside from "./Aside";
-export function Dashboard() {
+import {
+  faArrowLeft,
+  faRightFromBracket,
+} from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { TbCategoryPlus } from "react-icons/tb";
+import { RiDiscountPercentLine } from "react-icons/ri";
+
+export function Dashboard({ handleLogout }) {
   const [edit, setEdit] = useState({
     name: "",
     ingredients: [],
@@ -198,35 +206,42 @@ export function Dashboard() {
             <SheetContent side="left" className="sm:max-w-xs">
               <nav className="grid gap-6 text-lg font-medium">
                 <Link
-                  href="#"
-                  className="group flex h-10 w-10 shrink-0 items-center justify-center gap-2 rounded-full bg-primary text-lg font-semibold text-primary-foreground md:text-base"
-                >
-                  <Package2 className="h-5 w-5 transition-all group-hover:scale-110" />
-                  <span className="sr-only">Acme Inc</span>
-                </Link>
-                <Link
-                  href="#"
+                  to="/"
                   className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground"
                 >
-                  <Home className="h-5 w-5" />
-                  Dashboard
+                  <FontAwesomeIcon icon={faArrowLeft} />
+                  Back to home
                 </Link>
                 <Link
-                  href="#"
+                  to="/admin/orders"
                   className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground"
                 >
                   <ShoppingCart className="h-5 w-5" />
                   Orders
                 </Link>
                 <Link
-                  href="#"
+                  to="/admin/products"
                   className="flex items-center gap-4 px-2.5 text-foreground"
                 >
                   <Package className="h-5 w-5" />
                   Products
                 </Link>
                 <Link
-                  href="#"
+                  to="/admin/category"
+                  className="flex items-center gap-4 px-2.5 text-foreground"
+                >
+                  <TbCategoryPlus className="h-5 w-5" />
+                  Categories
+                </Link>
+                <Link
+                  to="/admin/promocodes"
+                  className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground"
+                >
+                  <RiDiscountPercentLine className="h-5 w-5" />
+                  Promocodes
+                </Link>
+                <Link
+                  to="/admin/customers"
                   className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground"
                 >
                   <Users2 className="h-5 w-5" />
@@ -235,9 +250,13 @@ export function Dashboard() {
                 <Link
                   href="#"
                   className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground"
+                  onClick={handleLogout}
                 >
-                  <LineChart className="h-5 w-5" />
-                  Settings
+                  <FontAwesomeIcon
+                    className="h-5 w-5"
+                    icon={faRightFromBracket}
+                  />
+                  Log out
                 </Link>
               </nav>
             </SheetContent>
@@ -258,15 +277,15 @@ export function Dashboard() {
                 </Link>
               </Button>
               <h1 className="flex-1 shrink-0 whitespace-nowrap text-xl font-semibold tracking-tight sm:grow-0">
-                Pro Controller
+                Edit Product
               </h1>
               {/* <Badge variant="outline" className="ml-auto sm:ml-0">
                 In stock
               </Badge> */}
               <div className="hidden items-center gap-2 md:ml-auto md:flex">
-                <Button variant="outline" size="sm" id="discardBtn">
+                {/* <Button variant="outline" size="sm" id="discardBtn">
                   Discard
-                </Button>
+                </Button> */}
                 <Button size="sm" onClick={handleUpdateProduct}>
                   Save Product
                 </Button>

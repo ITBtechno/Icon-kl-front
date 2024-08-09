@@ -57,12 +57,10 @@ import Aside from "./Aside";
 import HeaderAdmin from "./HeaderAdmin";
 
 export function Dashboard() {
-  const [products, setProducts] = useState([]);
-  const [error, setError] = useState(null);
+  const [codes, setCodes] = useState([]);
+  const [filteredCodes, setFilteredCodes] = useState([]);
   const { token } = useSelector((state) => state.auth);
-  const [filteredProducts, setFilteredProducts] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
-  const navigate = useNavigate();
   const [api, contextHolder] = notification.useNotification();
 
   const openNotificationWithIcon = (type) => {
@@ -70,15 +68,19 @@ export function Dashboard() {
       message: type,
       description:
         type === "success"
-          ? "Product deleted successfully!"
-          : "Product not deleted!",
+          ? "Promocode deleted successfully!"
+          : "Promocode not deleted!",
     });
   };
 
-  const handleGetProducts = async () => {
+  //   const filteredCodes = codes.filter((code) =>
+  //     code.code.toLowerCase().includes(searchTerm.toLowerCase())
+  //   );
+
+  const handleGetPromocodes = async () => {
     try {
       const response = await fetch(
-        "https://icon-kl-back.onrender.com/api/items-with-category",
+        "https://icon-kl-back.onrender.com/api/promocodes",
         {
           method: "GET",
           headers: {
@@ -90,8 +92,8 @@ export function Dashboard() {
 
       if (response.ok) {
         const data = await response.json();
-        setProducts(data);
-        setFilteredProducts(data);
+        setCodes(data);
+        setFilteredCodes(data);
         console.log(data);
       } else {
         setError(`HTTP error: ${response.status}`);
@@ -103,21 +105,18 @@ export function Dashboard() {
     }
   };
 
-  const handleSearch = (e) => {
-    const searchTerm = e.target.value;
-    setSearchTerm(searchTerm);
-    const lowercasedSearchTerm = searchTerm.toLowerCase();
+  useEffect(() => {
+    handleGetPromocodes();
+  }, []);
 
-    const filtered = products.filter((product) =>
-      product.name.toLowerCase().includes(lowercasedSearchTerm)
-    );
-    setFilteredProducts(filtered);
+  const handleSearch = (e) => {
+    setSearchTerm(e.target.value);
   };
 
-  const handleDeleteProduct = async (id) => {
+  const handleDeletePromocode = async (id) => {
     try {
       const response = await fetch(
-        `https://icon-kl-back.onrender.com/api/items/${id}`,
+        `https://icon-kl-back.onrender.com/api/promocodes/${id}`,
         {
           method: "DELETE",
           headers: {
@@ -128,28 +127,22 @@ export function Dashboard() {
       );
 
       if (response.ok) {
-        setProducts((prevProducts) =>
-          prevProducts.filter((product) => product._id !== id)
+        setCodes((prevCodes) => prevCodes.filter((code) => code._id !== id));
+        setFilteredCodes((prevFilteredCodes) =>
+          prevFilteredCodes.filter((code) => code._id !== id)
         );
-        setFilteredProducts((prevFilteredProducts) =>
-          prevFilteredProducts.filter((product) => product._id !== id)
-        );
-        console.log("Product deleted successfully");
+        console.log("Promocode deleted successfully");
         openNotificationWithIcon("success");
       } else {
         setError(`HTTP error: ${response.status}`);
-        console.error("Error deleting product:", response.status);
+        console.error("Error deleting promocode:", response.status);
         openNotificationWithIcon("error");
       }
     } catch (error) {
       setError(error.message);
-      console.error("Error deleting product:", error);
+      console.error("Error deleting promocode:", error);
     }
   };
-
-  useEffect(() => {
-    handleGetProducts();
-  }, []);
 
   return (
     <div className="flex min-h-screen w-full flex-col bg-muted/40">
@@ -160,23 +153,17 @@ export function Dashboard() {
         <HeaderAdmin
           searchTerm={searchTerm}
           handleSearch={handleSearch}
-          name={"Products"}
+          name={"Promocodes"}
         />
         <main className="grid flex-1 items-start gap-4 p-4 sm:px-6 sm:py-0 md:gap-8">
           <Tabs defaultValue="all">
             <div className="flex items-center">
               <div className="ml-auto flex items-center gap-2">
-                {/* <Button size="sm" variant="outline" className="h-8 gap-1">
-                  <File className="h-3.5 w-3.5" />
-                  <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-                    Export
-                  </span>
-                </Button> */}
-                <Link to="/admin/addProduct">
+                <Link to="/admin/addPromocode">
                   <Button size="sm" className="h-8 gap-1" id="add">
                     <PlusCircle className="h-3.5 w-3.5" />
                     <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-                      Add Product
+                      Add Promocode
                     </span>
                   </Button>
                 </Link>
@@ -185,25 +172,26 @@ export function Dashboard() {
             <TabsContent value="all">
               <Card x-chunk="dashboard-06-chunk-0">
                 <CardHeader>
-                  <CardTitle>Products</CardTitle>
-                  <CardDescription>
-                    Manage your products and view their sales performance.
-                  </CardDescription>
+                  <CardTitle>Promocodes</CardTitle>
+                  <CardDescription>Manage your promocodes.</CardDescription>
                 </CardHeader>
                 <CardContent>
                   <Table>
                     <TableHeader>
                       <TableRow>
-                        <TableHead className="hidden w-[100px] sm:table-cell">
-                          <span className="sr-only">Image</span>
-                        </TableHead>
-                        <TableHead>Items</TableHead>
-                        <TableHead>Category</TableHead>
+                        <TableHead>Codes</TableHead>
+                        <TableHead>Discount</TableHead>
                         <TableHead className="hidden md:table-cell">
-                          Price
+                          Limit
                         </TableHead>
                         <TableHead className="hidden md:table-cell">
-                          Ingredients
+                          Expiration date
+                        </TableHead>
+                        <TableHead className="hidden md:table-cell">
+                          Expired
+                        </TableHead>
+                        <TableHead className="hidden md:table-cell">
+                          Created
                         </TableHead>
                         <TableHead>
                           <span className="sr-only">Actions</span>
@@ -211,45 +199,28 @@ export function Dashboard() {
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {filteredProducts.length > 0 ? (
-                        filteredProducts.map((product) => (
-                          <TableRow key={product._id}>
-                            <TableCell className="hidden sm:table-cell">
-                              {product.image ? (
-                                <img
-                                  alt="Product image"
-                                  className="aspect-square rounded-md object-cover"
-                                  height="64"
-                                  src={product.image}
-                                  width="64"
-                                />
-                              ) : (
-                                <p
-                                  className="text-[#FACC15] select-none hover:text-[#ffc423] cursor-pointer"
-                                  onClick={() =>
-                                    navigate(`/admin/${product._id}/edit`)
-                                  }
-                                >
-                                  Add image
-                                </p>
-                              )}
-                            </TableCell>
+                      {filteredCodes.length > 0 ? (
+                        filteredCodes.map((code) => (
+                          <TableRow key={code._id}>
                             <TableCell className="font-medium">
-                              {product.name}
+                              {code.code}
                             </TableCell>
                             <TableCell>
                               <Badge variant="outline" id="status">
-                                {product.categoryId?.name}
+                                {code.discount}
                               </Badge>
                             </TableCell>
                             <TableCell className="hidden md:table-cell">
-                              {product?.price.toFixed(2)}₼
+                              {code.limit}
                             </TableCell>
                             <TableCell className="hidden md:table-cell">
-                              {product.ingredients &&
-                              product.ingredients.length > 0
-                                ? product.ingredients.join(", ")
-                                : `—`}
+                              {new Date(code.expirationDate).toLocaleString()}
+                            </TableCell>
+                            <TableCell className="hidden md:table-cell">
+                              {code.expired}
+                            </TableCell>
+                            <TableCell className="hidden md:table-cell">
+                              {new Date(code.createdAt).toLocaleString()}
                             </TableCell>
                             <TableCell>
                               <DropdownMenu>
@@ -264,15 +235,12 @@ export function Dashboard() {
                                   </Button>
                                 </DropdownMenuTrigger>
                                 <DropdownMenuContent align="end" id="actions">
-                                  <Link
-                                    to={`/admin/${product._id}/edit`}
-                                    id="edit"
-                                  >
+                                  <Link id="edit">
                                     <DropdownMenuItem>Edit</DropdownMenuItem>
                                   </Link>
                                   <DropdownMenuItem
                                     onClick={() =>
-                                      handleDeleteProduct(product._id)
+                                      handleDeletePromocode(code._id)
                                     }
                                   >
                                     Delete
@@ -285,7 +253,7 @@ export function Dashboard() {
                       ) : (
                         <TableRow>
                           <TableCell colSpan={6}>
-                            <p>No products available</p>
+                            <p>No promocodes available</p>
                           </TableCell>
                         </TableRow>
                       )}

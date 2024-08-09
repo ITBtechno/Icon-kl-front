@@ -39,6 +39,8 @@ import {
 import Cookies from "js-cookie";
 import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../../redux/actions/authActions";
+import { TbCategoryPlus } from "react-icons/tb";
+import { RiDiscountPercentLine } from "react-icons/ri";
 
 function HeaderAdmin({ searchTerm, handleSearch }) {
   const [userName, setUserName] = useState("");
@@ -91,8 +93,15 @@ function HeaderAdmin({ searchTerm, handleSearch }) {
               to="/admin/category"
               className="flex items-center gap-4 px-2.5 text-foreground"
             >
-              <FontAwesomeIcon className="h-5 w-5" icon={faLayerGroup} />
+              <TbCategoryPlus className="h-5 w-5" />
               Categories
+            </Link>
+            <Link
+              to="/admin/promocodes"
+              className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground"
+            >
+              <RiDiscountPercentLine className="h-5 w-5" />
+              Promocodes
             </Link>
             <Link
               to="/admin/customers"

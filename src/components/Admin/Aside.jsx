@@ -16,6 +16,9 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { TooltipProvider } from "@radix-ui/react-tooltip";
 import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../../redux/actions/authActions";
+import { TbCategoryPlus } from "react-icons/tb";
+import { RiDiscountPercentLine } from "react-icons/ri";
+
 function Aside() {
   const [userName, setUserName] = useState("");
   const [userGender, setUserGender] = useState("");
@@ -81,11 +84,23 @@ function Aside() {
                 to="/admin/category"
                 className="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-foreground md:h-8 md:w-8"
               >
-                <FontAwesomeIcon className="h-5 w-5" icon={faLayerGroup} />
+                <TbCategoryPlus className="h-5 w-5" />
                 <span className="sr-only">Categories</span>
               </Link>
             </TooltipTrigger>
             <TooltipContent side="right">Categories</TooltipContent>
+          </Tooltip>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Link
+                to="/admin/promocodes"
+                className="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-foreground md:h-8 md:w-8"
+              >
+                <RiDiscountPercentLine className="h-5 w-5" />
+                <span className="sr-only">Promocodes</span>
+              </Link>
+            </TooltipTrigger>
+            <TooltipContent side="right">Promocodes</TooltipContent>
           </Tooltip>
           <Tooltip>
             <TooltipTrigger asChild>
