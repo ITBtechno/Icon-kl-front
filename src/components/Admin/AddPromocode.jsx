@@ -1,71 +1,56 @@
 import {
   ChevronLeft,
-  Home,
-  LineChart,
   Package,
-  Package2,
   PanelLeft,
   ShoppingCart,
-  Upload,
   Users2,
 } from "lucide-react";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { Select as AntdSelect, notification } from "antd";
-import { useSelector } from "react-redux";
-import Aside from "./Aside";
 import {
   faArrowLeft,
   faRightFromBracket,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { TbCategoryPlus } from "react-icons/tb";
+import { DatePicker, notification, Space } from "antd";
 import { RiDiscountPercentLine } from "react-icons/ri";
-import { DatePicker, Space } from "antd";
+import { TbCategoryPlus } from "react-icons/tb";
+import { useSelector } from "react-redux";
+import Aside from "./Aside";
 
 export function Dashboard({ handleLogout }) {
   const [formData, setFormData] = useState({
-    name: "",
-    ingredients: [],
-    price: "",
-    categoryId: "",
-    image: null,
+    code: "",
+    expirationDate: "",
+    limit: 0,
+    discount: 0,
   });
-  const [selectedImage, setSelectedImage] = useState(null);
-  const [categoryOptions, setCategoryOptions] = useState([]);
-  const { token } = useSelector((state) => state.auth);
+  const [error, setError] = useState("");
+  const [selectedDate, setSelectedDate] = useState(null);
 
+  const { token } = useSelector((state) => state.auth);
   const [api, contextHolder] = notification.useNotification();
 
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      [name]: value,
+    }));
+  };
+
   const onChange = (date, dateString) => {
-    console.log(date, dateString);
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      expirationDate: dateString,
+    }));
+    setSelectedDate(date);
   };
 
   const openNotificationWithIcon = (type) => {
@@ -73,91 +58,68 @@ export function Dashboard({ handleLogout }) {
       message: type,
       description:
         type === "success"
-          ? "Product added successfully!"
-          : "Product not added!",
+          ? "Promocode added successfully!"
+          : "Promocode not added!",
     });
-  };
-  useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        const response = await fetch(
-          "https://icon-kl-back.onrender.com/api/categories"
-        );
-        const data = await response.json();
-        setCategoryOptions(data);
-      } catch (error) {
-        console.error("Error fetching categories:", error);
-      }
-    };
-
-    fetchCategories();
-  }, []);
-
-  const handleFileChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      setSelectedImage(URL.createObjectURL(file));
-      setFormData((prev) => ({ ...prev, image: file }));
-    }
-  };
-
-  const handleDeleteImage = () => {
-    setSelectedImage(null);
-    setFormData((prev) => ({ ...prev, image: null }));
-  };
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
-  const handleIngredientChange = (value) => {
-    setFormData((prev) => ({ ...prev, ingredients: value }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const formDataToSend = new FormData();
-
-    Object.entries(formData).forEach(([key, value]) => {
-      if (key === "ingredients") {
-        value.forEach((ingredient) => {
-          formDataToSend.append("ingredients[]", ingredient);
-        });
-      } else if (value !== null && value !== "") {
-        formDataToSend.append(key, value);
-      }
-    });
-
     try {
+      const existingCodesResponse = await fetch(
+        "https://icon-kl-back.onrender.com/api/promocodes",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (!existingCodesResponse.ok) {
+        throw new Error("Failed to fetch existing promocodes");
+      }
+
+      const existingCodes = await existingCodesResponse.json();
+
+      const codeExists = existingCodes.some(
+        (promo) => promo.code === formData.code
+      );
+
+      if (codeExists) {
+        setError(
+          "This promocode already exists. Please choose a different code."
+        );
+        openNotificationWithIcon("error");
+        return;
+      }
+
       const response = await fetch(
-        "https://icon-kl-back.onrender.com/api/items",
+        "https://icon-kl-back.onrender.com/api/promocodes",
         {
           method: "POST",
           headers: {
             Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
           },
-          body: formDataToSend,
+          body: JSON.stringify(formData),
         }
       );
 
       if (response.ok) {
-        console.log("Product added successfully!");
         openNotificationWithIcon("success");
         setFormData({
-          name: "",
-          ingredients: [],
-          price: "",
-          categoryId: "",
-          image: null,
+          code: "",
+          expirationDate: "",
+          limit: 0,
+          discount: 0,
         });
-        setSelectedImage(null);
+        setError("");
+        setSelectedDate(null);
       } else {
-        const errorData = await response.json();
-        console.error("Failed to add product:", errorData);
         openNotificationWithIcon("error");
       }
     } catch (error) {
-      console.error("Error adding product:", error);
+      openNotificationWithIcon("error");
     }
   };
 
@@ -242,7 +204,7 @@ export function Dashboard({ handleLogout }) {
                 className="h-7 w-7"
                 id="back"
               >
-                <Link to="/admin/products">
+                <Link to="/admin/promocodes">
                   <ChevronLeft className="h-4 w-4" />
                   <span className="sr-only">Back</span>
                 </Link>
@@ -251,9 +213,6 @@ export function Dashboard({ handleLogout }) {
                 Add Promocode
               </h1>
               <div className="hidden items-center gap-2 md:ml-auto md:flex">
-                {/* <Button variant="outline" size="sm" id="discardBtn">
-                    Discard
-                  </Button> */}
                 <Button size="sm" type="submit" onClick={handleSubmit}>
                   Add Promocode
                 </Button>
@@ -272,19 +231,22 @@ export function Dashboard({ handleLogout }) {
                         <Input
                           type="text"
                           id="name"
-                          name="name"
-                          value={formData.name}
+                          name="code"
+                          value={formData.code}
                           onChange={handleChange}
                           required
                         />
+                        <span className="text-[#fc3c3c]">
+                          {error}
+                        </span>
                       </div>
                       <div className="grid gap-3">
                         <Label htmlFor="price">Discount</Label>
                         <Input
                           type="number"
                           id="price"
-                          name="price"
-                          value={formData.price}
+                          name="discount"
+                          value={formData.discount}
                           onChange={handleChange}
                           required
                         />
@@ -294,8 +256,8 @@ export function Dashboard({ handleLogout }) {
                         <Input
                           type="number"
                           id="price"
-                          name="price"
-                          value={formData.price}
+                          name="limit"
+                          value={formData.limit}
                           onChange={handleChange}
                           required
                         />
@@ -321,55 +283,14 @@ export function Dashboard({ handleLogout }) {
                           renderExtraFooter={() => ""}
                           showTime
                           placeholder="Select date"
+                          onChange={onChange}
+                          value={selectedDate}
                         />
                       </Space>
                     </div>
                   </CardContent>
                 </Card>
-                {/* <Card x-chunk="dashboard-07-chunk-2">
-                  <CardHeader>
-                    <CardTitle>Product Category</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="grid gap-6 sm:grid-cols-3">
-                      <div className="grid gap-3">
-                        <Label htmlFor="category">Category</Label>
-                        <Select
-                          value={formData.categoryId}
-                          onValueChange={(value) =>
-                            setFormData((prevFormData) => ({
-                              ...prevFormData,
-                              categoryId: value,
-                            }))
-                          }
-                        >
-                          <SelectTrigger className="stocks">
-                            <SelectValue placeholder="Select category" />
-                          </SelectTrigger>
-                          <SelectContent className="stocks">
-                            {categoryOptions.map((category) => (
-                              <SelectItem
-                                key={category._id}
-                                value={category._id}
-                              >
-                                {category.name}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card> */}
               </div>
-            </div>
-            <div className="flex items-center justify-center gap-2 md:hidden">
-              <Button variant="outline" size="sm">
-                Discard
-              </Button>
-              <Button size="sm" type="submit" onClick={handleSubmit}>
-                Add Product
-              </Button>
             </div>
           </div>
         </main>

@@ -72,11 +72,16 @@ export function Dashboard() {
           : "Promocode not deleted!",
     });
   };
+  const handleSearch = (e) => {
+    const searchTerm = e.target.value;
+    setSearchTerm(searchTerm);
+    const lowercasedSearchTerm = searchTerm.toLowerCase();
 
-  //   const filteredCodes = codes.filter((code) =>
-  //     code.code.toLowerCase().includes(searchTerm.toLowerCase())
-  //   );
-
+    const filtered = codes.filter((code) =>
+      code.code.toLowerCase().includes(lowercasedSearchTerm)
+    );
+    setFilteredCodes(filtered);
+  };
   const handleGetPromocodes = async () => {
     try {
       const response = await fetch(
@@ -108,10 +113,6 @@ export function Dashboard() {
   useEffect(() => {
     handleGetPromocodes();
   }, []);
-
-  const handleSearch = (e) => {
-    setSearchTerm(e.target.value);
-  };
 
   const handleDeletePromocode = async (id) => {
     try {
@@ -202,23 +203,28 @@ export function Dashboard() {
                       {filteredCodes.length > 0 ? (
                         filteredCodes.map((code) => (
                           <TableRow key={code._id}>
-                            <TableCell className="font-medium">
+                            <TableCell className="font-medium text-[#FACC15]">
                               {code.code}
                             </TableCell>
-                            <TableCell>
-                              <Badge variant="outline" id="status">
-                                {code.discount}
-                              </Badge>
-                            </TableCell>
+                            <TableCell>{code.discount}%</TableCell>
                             <TableCell className="hidden md:table-cell">
-                              {code.limit}
+                              {code.limit} customers
                             </TableCell>
                             <TableCell className="hidden md:table-cell">
                               {new Date(code.expirationDate).toLocaleString()}
                             </TableCell>
-                            <TableCell className="hidden md:table-cell">
-                              {code.expired}
+                            <TableCell
+                              className={`hidden md:table-cell ${
+                                code?.expired?.toString() === "false"
+                                  ? "text-lime-500"
+                                  : "text-rose-500"
+                              }`}
+                            >
+                              {code?.expired?.toString() === "false"
+                                ? "Active"
+                                : "Expired" || "N/A"}
                             </TableCell>
+
                             <TableCell className="hidden md:table-cell">
                               {new Date(code.createdAt).toLocaleString()}
                             </TableCell>
