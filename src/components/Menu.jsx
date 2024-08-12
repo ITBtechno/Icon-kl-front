@@ -655,8 +655,8 @@ export default function Menu() {
                     />
                   ) : (
                     <img
-                      className="noImage"
-                      src={"./assets/uil_restaurant.png"}
+                      className="productImg"
+                      src={"./assets/foodImg.png"}
                       alt={activeProduct.name}
                     />
                   )}
