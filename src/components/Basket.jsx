@@ -10,12 +10,12 @@ import axios from "axios";
 import { Helmet } from "react-helmet";
 import { loginSuccess } from "../redux/actions/authActions";
 import Cookies from "js-cookie";
+import { notification } from "antd";
 
 export default function Basket() {
   const [isModalOpen, setModalOpen] = useState(false);
   const [isModal2Open, setModal2Open] = useState(false);
   const [isBasketModalOpen, setBasketModalOpen] = useState(false);
-  const [phoneValue, setPhoneValue] = useState("");
   const [paymentMethod, setPaymentMethod] = useState("cash");
   const theOrders = useSelector((state) => state.orders);
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
@@ -24,9 +24,22 @@ export default function Basket() {
   const [promoCode, setPromoCode] = useState("");
   const [isPromoCodeValid, setIsPromoCodeValid] = useState(false);
   const [promoCodeError, setPromoCodeError] = useState("");
+  const [promoCodeId, setPromoCodeId] = useState("");
+  const [discount, setDiscount] = useState(null);
+  const [api, contextHolder] = notification.useNotification();
 
   let totalPrice = 0;
   const dispatch = useDispatch();
+
+  const promocodeApplied = (type) => {
+    api[type]({
+      message: type,
+      description:
+        type === "success"
+          ? "Promokod tətbiq edildi!"
+          : "Promo kodu tətbiq edilmədi. Xahiş edirik, kodu yoxlayın",
+    });
+  };
 
   const handleIncrement = (id) => {
     dispatch({
@@ -81,59 +94,6 @@ export default function Basket() {
     setBasketModalOpen(false);
   };
 
-  const extractCountryAndNumber = (value) => {
-    const countryLengths = {
-      994: 12,
-    };
-
-    let countryCode = "";
-    let phoneNumber = "";
-
-    for (const code of Object.keys(countryLengths)) {
-      if (value.startsWith(code)) {
-        countryCode = code;
-        phoneNumber = value.substring(code.length);
-        break;
-      }
-    }
-
-    return { countryCode, phoneNumber };
-  };
-
-  const handlePhoneSubmit = async (e) => {
-    e.preventDefault();
-    const { countryCode, phoneNumber } = extractCountryAndNumber(phoneValue);
-    try {
-      const response = await axios.post(
-        "https://icon-kl-back.onrender.com/api/otp/send",
-        { countryCode, phoneNumber }
-      );
-      if (response.status === 200) {
-        setModal2Open(false);
-        setModal2OpenNext(true);
-      }
-    } catch (error) {
-      console.error("Error sending OTP", error);
-    }
-  };
-
-  const handleSubmitEmail = async (e) => {
-    e.preventDefault();
-    const email = e.target.email.value;
-    try {
-      const response = await axios.post(
-        "https://icon-kl-back.onrender.com/api/otp/send",
-        { email }
-      );
-      if (response.status === 200) {
-        setModal2Open(false);
-        openVerifyModal(email);
-      }
-    } catch (error) {
-      console.error("Error:", error);
-    }
-  };
-
   const modalRef1 = useRef();
   const modalRef2 = useRef();
 
@@ -156,7 +116,7 @@ export default function Basket() {
 
   const applyPromoCode = async () => {
     if (!promoCode) {
-      alert("Promo kodu daxil edin.");
+      setPromoCodeError("Promokodu daxil edin!");
       return;
     }
 
@@ -169,7 +129,7 @@ export default function Basket() {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
-          body: JSON.stringify({ promoCode }),
+          body: JSON.stringify({ code: promoCode }),
         }
       );
 
@@ -177,19 +137,20 @@ export default function Basket() {
         const data = await response.json();
         setIsPromoCodeValid(true);
         setPromoCodeError("");
-        alert("Promo kodu tətbiq edildi!");
+        promocodeApplied("success");
+        setDiscount(data?.promocode?.discount);
+        setPromoCodeId(data?.promocode?._id);
       } else {
         const errorData = await response.json();
         setIsPromoCodeValid(false);
         setPromoCodeError(
-          errorData.message ||
+          errorData.error.message ||
             "Promo kodu tətbiq edilmədi. Xahiş edirik, kodu yoxlayın."
         );
-        console.error("Xəta:", errorData);
+        promocodeApplied("error");
       }
     } catch (error) {
-      console.error("Promo kodunu tətbiq edərkən xəta baş verdi:", error);
-      alert("Promo kodunu tətbiq edərkən xəta baş verdi.");
+      promocodeApplied("error");
     }
   };
 
@@ -209,19 +170,23 @@ export default function Basket() {
       itemCount: order.count,
     }));
 
+    const calculatedTotalPrice = theOrders.reduce(
+      (acc, order) => acc + order.price * order.count,
+      0
+    );
+
+    const discountedTotalPrice = discount
+      ? calculatedTotalPrice - calculatedTotalPrice * (discount / 100)
+      : calculatedTotalPrice;
+
     const orderData = {
-      amount: totalPrice,
+      amount: discountedTotalPrice,
       items: orderItems,
       paymentMethod: paymentMethod,
       orderByUserId: userId,
-      promocode: promoCode
-        ? [
-            {
-              code: promoCode,
-            },
-          ]
-        : [],
+      promocodeId: promoCodeId,
     };
+    console.log(orderData);
 
     try {
       const response = await fetch(
@@ -252,7 +217,7 @@ export default function Basket() {
         const paymentText =
           paymentMethod === "cash" ? "Nagd ödəniş" : "Kredit kartı ilə ödəniş";
 
-        const message = `Sifarişlər:\n${orderDetails}\nÖdəniş: ${paymentText}\nCəm: ${totalPrice} AZN`;
+        const message = `Sifarişlər:\n${orderDetails}\nÖdəniş: ${paymentText}\nCəm: ${discountedTotalPrice} AZN`;
 
         alert(message);
       } else {
@@ -627,7 +592,7 @@ export default function Basket() {
           </div>
         )}
       </div>
-
+      {contextHolder}
       {isModalOpen && (
         <div id="myModal" className="modal">
           <div className="modal-content" ref={modalRef1}>
@@ -663,32 +628,7 @@ export default function Basket() {
           </div>
         </div>
       )}
-      {isModal2Open && (
-        <div id="myModal" className="modal2">
-          <div className="modal-content2" ref={modalRef2}>
-            <button className="close2" onClick={close2Modal}>
-              &times;
-            </button>
-            <div className="modal_info2">
-              <div className="choice2">Giriş et</div>
-              <form onSubmit={handleSubmitEmail}>
-                <input
-                  type="email"
-                  className="emailInput"
-                  name="email"
-                  placeholder="E-mailinizi daxil edin"
-                  required
-                />
-                <div className="continue">
-                  <button className="continueBtn" type="submit">
-                    Davam et
-                  </button>
-                </div>
-              </form>
-            </div>
-          </div>
-        </div>
-      )}
+
       {isBasketModalOpen && (
         <div className="pop-up-payment">
           <button onClick={closeBasketModal} className="close-payment">
@@ -700,6 +640,8 @@ export default function Basket() {
               className="code"
               type="text"
               placeholder={t("p-code")}
+              value={promoCode}
+              onChange={() => setPromoCode(e.target.value)}
             ></input>
             <button className="promoButton"> {t("apply")}</button>
           </div>

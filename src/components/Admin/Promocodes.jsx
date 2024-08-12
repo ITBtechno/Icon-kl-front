@@ -9,6 +9,7 @@ import {
   PlusCircle,
   Search,
   ShoppingCart,
+  TrashIcon,
   Users2,
 } from "lucide-react";
 import React, { useEffect, useState } from "react";
@@ -229,30 +230,10 @@ export function Dashboard() {
                               {new Date(code.createdAt).toLocaleString()}
                             </TableCell>
                             <TableCell>
-                              <DropdownMenu>
-                                <DropdownMenuTrigger asChild>
-                                  <Button
-                                    aria-haspopup="true"
-                                    size="icon"
-                                    variant="ghost"
-                                  >
-                                    <MoreHorizontal className="h-4 w-4" />
-                                    <span className="sr-only">Toggle menu</span>
-                                  </Button>
-                                </DropdownMenuTrigger>
-                                <DropdownMenuContent align="end" id="actions">
-                                  <Link id="edit">
-                                    <DropdownMenuItem>Edit</DropdownMenuItem>
-                                  </Link>
-                                  <DropdownMenuItem
-                                    onClick={() =>
-                                      handleDeletePromocode(code._id)
-                                    }
-                                  >
-                                    Delete
-                                  </DropdownMenuItem>
-                                </DropdownMenuContent>
-                              </DropdownMenu>
+                              <TrashIcon
+                                className="size-5 text-[#FACC15] hover:text-[#fc3c3c] duration-150"
+                                onClick={() => handleDeletePromocode(code._id)}
+                              />
                             </TableCell>
                           </TableRow>
                         ))
