@@ -190,7 +190,7 @@ export default function Basket() {
 
     try {
       const response = await fetch(
-        "https://icon-karaoke-and-lounge-back.onrender.com/api/orders",
+        "https://icon-kl-back.onrender.com/api/orders",
         {
           method: "POST",
           headers: {
